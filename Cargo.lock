@@ -28,7 +28,7 @@ dependencies = [
 
 [[package]]
 name = "oml-audio"
-version = "0.1.1-dev"
+version = "0.1.1-alpha"
 dependencies = [
  "objc",
 ]
