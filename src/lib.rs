@@ -1,8 +1,9 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
+mod music;
+pub use music::Music as Music;
+
+mod sound;
+pub use sound::Sound as Sound;
+
+
+pub mod fileloader;
+pub use fileloader::FileLoader as FileLoader;
