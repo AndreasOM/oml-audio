@@ -27,7 +27,7 @@ impl SoundPool {
 	pub fn new() -> Self {
 		Self {
 			players: 	VecDeque::new(),
-			drop_mode:	DropMode::OlderThan,
+			drop_mode:	DropMode::Oldest,
 		}
 	}
 
@@ -71,7 +71,7 @@ impl SoundPool {
 			let prep_result: bool = msg_send![ player, prepareToPlay ];
 			if prep_result {
 				self.players.push_back( player );
-//				let _: () = msg_send![ player, setNumberOfLoops: -1 ];
+				let _: () = msg_send![ player, setNumberOfLoops: 0 ];
 				true
 			} else {
 				false
@@ -120,20 +120,22 @@ impl SoundPool {
 			unsafe {
 				let playing: bool = msg_send![ player, isPlaying ];
 				if !playing {
+					println!("Using new player!");
 					self.players.pop_front()
 				} else {
 					match self.drop_mode {
 						DropMode::Newest => None,
 						DropMode::Oldest => {
+							println!("Reusing old player!");
 							let _: () = msg_send![ player, stop ];
-							let _: () = msg_send![ player, setCurrentTime: 0.0 ];
+//							let _: () = msg_send![ player, setCurrentTime: 0.0 ];
 							self.players.pop_front()
 						},
 						DropMode::OlderThan => {
 							let current_time: f64 = msg_send![ player, currentTime ];
 							if current_time > 0.5 {
 								let _: () = msg_send![ player, stop ];
-								let _: () = msg_send![ player, setCurrentTime: 0.0 ];
+//								let _: () = msg_send![ player, setCurrentTime: 0.0 ];
 								self.players.pop_front()
 							} else {
 								None
@@ -143,9 +145,12 @@ impl SoundPool {
 				}
 			}
 		} else {
+			println!("No player found!");
 			None
 		} {
+			println!("Playing!");
 			unsafe {
+				let _: () = msg_send![ player, setCurrentTime: 0.0 ];
 				let _: () = msg_send![ player, play ];
 			}
 			self.players.push_back( player );
