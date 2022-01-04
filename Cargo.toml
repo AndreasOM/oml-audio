@@ -5,6 +5,14 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+license = "MIT"
+description = "Very basic, and thin abstraction of audio handling meant for games."
+readme = "README.md"
+homepage = "https://github.com/AndreasOM/oml-audio"
+repository = "https://github.com/AndreasOM/oml-audio"
+keywords = ["tools", "gamedev"]
+categories = ["music","game-development"]
+
 [[bin]] 
 name="oml-audio"
 path="src/oml_audio_main.rs"
