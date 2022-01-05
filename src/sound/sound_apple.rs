@@ -132,7 +132,7 @@ impl SoundPool {
 					match self.drop_mode {
 						DropMode::Newest => None,
 						DropMode::Oldest => {
-							println!("Reusing old player!");
+							if self.debug { println!("Reusing old player!"); }
 //							let _: () = msg_send![ player, stop ];
 //							let _: () = msg_send![ player, setCurrentTime: 0.0 ];
 							self.players.pop_front()
