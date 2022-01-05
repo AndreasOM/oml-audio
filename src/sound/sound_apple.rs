@@ -21,6 +21,7 @@ enum DropMode {
 struct SoundPool {
 	players:	VecDeque< *mut Object >,
 	drop_mode:	DropMode,
+	debug:		bool,
 }
 
 impl SoundPool {
@@ -28,6 +29,7 @@ impl SoundPool {
 		Self {
 			players: 	VecDeque::new(),
 			drop_mode:	DropMode::Oldest,
+			debug:		false,
 		}
 	}
 
@@ -51,8 +53,10 @@ impl SoundPool {
 				msg_send![ cls_nsdata, data ]
 			};
 
+			/*
 			let data_len: u64 = msg_send![ data, length ];
 			dbg!(&data_len);
+			*/
 
 			data
 		}
@@ -107,7 +111,7 @@ impl SoundPool {
 					return false
 				}
 			}
-			dbg!( self.players.len() );
+			if self.debug { dbg!( self.players.len() ); }
 			true
 		} else {
 			println!("Sound {} not found", &name );
@@ -119,22 +123,24 @@ impl SoundPool {
 		if let Some( player ) = if let Some( &player ) = self.players.front( ) {
 			unsafe {
 				let playing: bool = msg_send![ player, isPlaying ];
+				if self.debug { dbg!(playing); }
 				if !playing {
-					println!("Using new player!");
+					if self.debug { println!("Using new player!"); }
 					self.players.pop_front()
 				} else {
+					if self.debug { println!("No new player found!"); }
 					match self.drop_mode {
 						DropMode::Newest => None,
 						DropMode::Oldest => {
 							println!("Reusing old player!");
-							let _: () = msg_send![ player, stop ];
+//							let _: () = msg_send![ player, stop ];
 //							let _: () = msg_send![ player, setCurrentTime: 0.0 ];
 							self.players.pop_front()
 						},
 						DropMode::OlderThan => {
 							let current_time: f64 = msg_send![ player, currentTime ];
 							if current_time > 0.5 {
-								let _: () = msg_send![ player, stop ];
+//								let _: () = msg_send![ player, stop ];
 //								let _: () = msg_send![ player, setCurrentTime: 0.0 ];
 								self.players.pop_front()
 							} else {
@@ -145,11 +151,12 @@ impl SoundPool {
 				}
 			}
 		} else {
-			println!("No player found!");
+			if self.debug { println!("No player found!"); }
 			None
 		} {
-			println!("Playing!");
+			if self.debug { println!("Playing!"); }
 			unsafe {
+				let _: () = msg_send![ player, stop ];
 				let _: () = msg_send![ player, setCurrentTime: 0.0 ];
 				let _: () = msg_send![ player, play ];
 			}
@@ -159,11 +166,19 @@ impl SoundPool {
 
 	pub fn update( &mut self, _time_step: f64 ) {
 	}
+
+	pub fn enable_debug( &mut self ) {
+		self.debug = true;
+	}
+	pub fn disable_debug( &mut self ) {
+		self.debug = false;
+	}
 }
 
 #[derive(Debug)]
 pub struct SoundApple {
-	sound_pools: HashMap< String, SoundPool>,
+	sound_pools:	HashMap< String, SoundPool>,
+	debug:			bool,
 }
 
 impl SoundApple {
@@ -171,11 +186,17 @@ impl SoundApple {
 	pub fn new() -> Self {
 		Self {
 			sound_pools: HashMap::new(),
+			debug: false,
 		}
 	}
 
 	pub fn load( &mut self, fileloader: &mut impl FileLoader, name: &str, number: u16 ) -> bool {
 		let mut sound_pool = SoundPool::new();
+		if self.debug {
+			sound_pool.enable_debug();
+		} else {
+			sound_pool.disable_debug();			
+		}
 		if sound_pool.load( fileloader, name, number ) {
 			self.sound_pools.insert( name.to_string(), sound_pool );
 			true
@@ -195,5 +216,19 @@ impl SoundApple {
 			sound_pool.update( time_step );
 		}
 	}
+
+	pub fn enable_debug( &mut self ) {
+		self.debug = true;
+		for sp in self.sound_pools.values_mut() {
+			sp.enable_debug();
+		}
+	}
+	pub fn disable_debug( &mut self ) {
+		self.debug = false;
+		for sp in self.sound_pools.values_mut() {
+			sp.disable_debug();
+		}
+	}
+
 }
 

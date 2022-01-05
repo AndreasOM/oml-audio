@@ -17,6 +17,7 @@ pub fn main() {
 	music.play();
 
 	let mut sound_coin = Sound::new();
+	sound_coin.enable_debug();
 	sound_coin.load( &mut fileloader, "coin", 10 );
 	sound_coin.play( "coin" );
 
@@ -35,7 +36,7 @@ pub fn main() {
 		coin_timer += timestep;
 
 //		dbg!(coin_timer);
-		if coin_timer > COIN_REPEAT {
+		while coin_timer > COIN_REPEAT {
 			coin_timer -= COIN_REPEAT;
 			sound_coin.play( "coin" );
 		}
