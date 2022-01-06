@@ -8,6 +8,26 @@ pub trait FileLoaderFile {
 	fn read_u8( &mut self ) -> u8;
 	fn eof( &self ) -> bool;
 	fn name( &self ) -> &str;
+
+	fn read_u16( &mut self ) -> u16 {
+		let a = self.read_u8() as u16;
+		let b = self.read_u8() as u16;
+
+		  ( b << 8 )
+		| ( a << 0 )
+	}
+
+	fn read_u32( &mut self ) -> u32 {
+		let a = self.read_u8() as u32;
+		let b = self.read_u8() as u32;
+		let c = self.read_u8() as u32;
+		let d = self.read_u8() as u32;
+
+		  ( d << 24 )
+		| ( c << 16 )
+		| ( b <<  8 )
+		| ( a <<  0 )
+	}
 }
 
 

@@ -31,26 +31,21 @@ pub fn main() {
 	let POWERUP_REPEAT = 3.1;
 	while !done {
 		let timestep = last_now.elapsed().as_secs_f64();
-//		dbg!(timestep);
 		last_now = Instant::now();
 
 		music.update( timestep );
-//		sound_coin.update( timestep );
 		sound_bank.update( timestep );
 
 		coin_timer += timestep;
 
-//		dbg!(coin_timer);
 		while coin_timer > COIN_REPEAT {
 			coin_timer -= COIN_REPEAT;
-//			sound_coin.play( "coin" );
 			sound_bank.play( "COIN" );
 		}
 
 		powerup_timer += timestep;
 		while powerup_timer > POWERUP_REPEAT {
 			powerup_timer -= POWERUP_REPEAT;
-//			sound_coin.play( "coin" );
 			sound_bank.play( "POWERUP" );
 		}
 
