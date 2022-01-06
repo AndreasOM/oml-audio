@@ -11,7 +11,7 @@ readme = "README.md"
 homepage = "https://github.com/AndreasOM/oml-audio"
 repository = "https://github.com/AndreasOM/oml-audio"
 keywords = ["tools", "gamedev"]
-categories = ["music","game-development"]
+categories = ["multimedia","game-development"]
 
 [[bin]] 
 name="oml-audio"
