@@ -18,13 +18,13 @@ enum DropMode {
 }
 
 #[derive(Debug)]
-struct SoundPool {
+pub struct SoundPoolApple {
 	players:	VecDeque< *mut Object >,
 	drop_mode:	DropMode,
 	debug:		bool,
 }
 
-impl SoundPool {
+impl SoundPoolApple {
 	pub fn new() -> Self {
 		Self {
 			players: 	VecDeque::new(),
@@ -102,7 +102,7 @@ impl SoundPool {
 		);
 
 		if let Some( filename ) = filename_maybe {
-			let data = SoundPool::load_data( fileloader, &filename );
+			let data = SoundPoolApple::load_data( fileloader, &filename );
 
 
 			for n in 0..number {
@@ -174,61 +174,3 @@ impl SoundPool {
 		self.debug = false;
 	}
 }
-
-#[derive(Debug)]
-pub struct SoundApple {
-	sound_pools:	HashMap< String, SoundPool>,
-	debug:			bool,
-}
-
-impl SoundApple {
-
-	pub fn new() -> Self {
-		Self {
-			sound_pools: HashMap::new(),
-			debug: false,
-		}
-	}
-
-	pub fn load( &mut self, fileloader: &mut impl FileLoader, name: &str, number: u16 ) -> bool {
-		let mut sound_pool = SoundPool::new();
-		if self.debug {
-			sound_pool.enable_debug();
-		} else {
-			sound_pool.disable_debug();			
-		}
-		if sound_pool.load( fileloader, name, number ) {
-			self.sound_pools.insert( name.to_string(), sound_pool );
-			true
-		} else {
-			false
-		}
-	}
-
-	pub fn play( &mut self, name: &str ) {
-		if let Some( sound_pool ) = self.sound_pools.get_mut( name ) {
-			sound_pool.play();
-		}
-	}
-
-	pub fn update( &mut self, time_step: f64 ) {
-		for sound_pool in self.sound_pools.values_mut() {
-			sound_pool.update( time_step );
-		}
-	}
-
-	pub fn enable_debug( &mut self ) {
-		self.debug = true;
-		for sp in self.sound_pools.values_mut() {
-			sp.enable_debug();
-		}
-	}
-	pub fn disable_debug( &mut self ) {
-		self.debug = false;
-		for sp in self.sound_pools.values_mut() {
-			sp.disable_debug();
-		}
-	}
-
-}
-

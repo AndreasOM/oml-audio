@@ -13,7 +13,7 @@ impl SoundStub {
 		}
 	}
 
-	pub fn load( &mut self, system: &mut System, _name: &str, _number: u16 ) -> bool {
+	pub fn load( &mut self, system: &mut System, _filename: &str, _name: &str, _number: u16 ) -> bool {
 		true
 	}
 

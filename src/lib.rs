@@ -2,7 +2,8 @@ mod music;
 pub use music::Music as Music;
 
 mod sound;
-pub use sound::Sound as Sound;
+pub use sound::SoundPool as SoundPool;
+pub use sound::SoundBank as SoundBank;
 
 
 pub mod fileloader;
