@@ -1,26 +1,36 @@
 
-use crate::system::System;
+use crate::FileLoader;
 
 
 #[derive(Debug)]
-pub struct SoundStub {
+pub struct SoundPoolStub {
+	debug: bool,
 }
 
-impl SoundStub {
+impl SoundPoolStub {
 
 	pub fn new() -> Self {
 		Self {
+			debug: false,
 		}
 	}
 
-	pub fn load( &mut self, system: &mut System, _filename: &str, _name: &str, _number: u16 ) -> bool {
+	pub fn load( &mut self, fileloader: &mut impl FileLoader, name: &str, number: u16 ) -> bool {
 		true
 	}
 
-	pub fn play( &mut self, _name: &str ) {
+	pub fn play( &mut self ) {
 	}
 
 	pub fn update( &mut self, _time_step: f64 ) {
 	}
+
+	pub fn enable_debug( &mut self ) {
+		self.debug = true;
+	}
+	pub fn disable_debug( &mut self ) {
+		self.debug = false;
+	}
+
 }
 

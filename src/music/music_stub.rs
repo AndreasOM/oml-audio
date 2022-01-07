@@ -1,5 +1,5 @@
 
-use crate::system::System;
+use crate::FileLoader;
 
 #[derive(Debug)]
 pub struct MusicStub {
@@ -11,7 +11,7 @@ impl MusicStub {
 		Self {
 		}
 	}
-	pub fn load( &mut self, _system: &mut System, _filename: &str ) -> bool {
+	pub fn load( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
 		true
 	}
 
