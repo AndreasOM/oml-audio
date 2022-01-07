@@ -40,7 +40,7 @@ pub fn main() {
 
 		while coin_timer > COIN_REPEAT {
 			coin_timer -= COIN_REPEAT;
-			sound_bank.play( "COIN" );
+			sound_bank.play( "PICKUP_COIN" );
 		}
 
 		powerup_timer += timestep;
