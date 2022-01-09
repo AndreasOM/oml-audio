@@ -127,6 +127,7 @@ impl FileLoader for FileLoaderDisk {
 	}
 	fn exists( &self, filename: &str ) -> bool {
 		let fullname = format!("{}/{}", &self.basedir, &filename);
+		if self.debug { println!("FileLoaderDisk exists? {}", fullname); }
 		std::path::Path::new(&fullname).exists()
 	}
 
