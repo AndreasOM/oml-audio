@@ -11,6 +11,7 @@ pub fn main() {
 
 
 	let mut fileloader = FileLoaderDisk::new( "./data" );
+	fileloader.enable_debug();
 
 	let mut music = Music::new();
 	music.load( &mut fileloader, "test.mp3" );

@@ -101,20 +101,26 @@ impl FileLoaderFile for FileLoaderFileDisk {
 }
 
 pub struct FileLoaderDisk {
-	basedir: String,
+	basedir:	String,
+	debug:		bool,
 }
 
 impl FileLoaderDisk {
 	pub fn new( basedir: &str ) -> Self {
 		Self {
-			basedir: basedir.to_string(),
+			basedir: 	basedir.to_string(),
+			debug:		false,
 		}
+	}
+	pub fn enable_debug ( &mut self ) {
+		self.debug = true;
 	}
 }
 
 impl FileLoader for FileLoaderDisk {
 	fn open( &mut self, filename: &str ) -> Box< dyn FileLoaderFile > {
 		let fullname = format!("{}/{}", &self.basedir, &filename);
+		if self.debug { println!("FileLoaderDisk opening {}", fullname); }
 		let stream = FileLoaderFileDisk::open( &fullname );
 
 		Box::new( stream )
@@ -123,5 +129,6 @@ impl FileLoader for FileLoaderDisk {
 		let fullname = format!("{}/{}", &self.basedir, &filename);
 		std::path::Path::new(&fullname).exists()
 	}
+
 
 }
