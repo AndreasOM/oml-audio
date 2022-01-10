@@ -1,3 +1,6 @@
+mod audio;
+pub use audio::Audio as Audio;
+
 mod music;
 pub use music::Music as Music;
 

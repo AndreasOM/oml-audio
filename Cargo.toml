@@ -23,6 +23,9 @@ name="oml-audio"
 path="src/oml_audio_main.rs"
 
 [dependencies]
+#miniaudio = { version = "0.10.0", features = [ "ma-no-decoding", "ma-log-level-verbose", "ma-debug-output" ] }
+miniaudio = { version = "0.10.0", features = [ "ma-no-decoding", "ma-log-level-verbose" ] }
+ringbuf = "0.2.6"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"
