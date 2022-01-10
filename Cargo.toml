@@ -13,7 +13,12 @@ repository = "https://github.com/AndreasOM/oml-audio"
 keywords = ["tools", "gamedev"]
 categories = ["multimedia","game-development"]
 
-[[bin]] 
+[features]
+default = [ "apple" ]
+# default = []
+apple = []
+
+[[bin]]
 name="oml-audio"
 path="src/oml_audio_main.rs"
 
