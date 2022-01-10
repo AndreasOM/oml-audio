@@ -1,5 +1,3 @@
-use std::env;
-
 pub fn main() {
 
     if std::env::var("TARGET").unwrap().contains("-apple") {
