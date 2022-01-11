@@ -3,6 +3,10 @@ use std::cell::RefCell;
 use std::sync::Arc;
 
 use crate::FileLoader;
+use crate::{
+	WavFile,
+	WavPlayer,
+};
 
 use miniaudio::{Device, DeviceConfig, DeviceType, Format};
 use miniaudio::{Waveform, WaveformConfig, WaveformType};
@@ -83,6 +87,8 @@ pub struct AudioMiniaudio {
 	producer:	ringbuf::Producer< f32 >,
 //	wave:		Waveform,
 	synth:		Synth,
+	wav_file:	WavFile,
+	wav_player: WavPlayer,
 }
 
 impl AudioMiniaudio {
@@ -130,6 +136,8 @@ impl AudioMiniaudio {
 			producer,
 //			wave: sine_wave,
 			synth:	Synth::new( 440.0 ),
+			wav_file: WavFile::new(),
+			wav_player: WavPlayer::new(),
 		}
 	}
 
@@ -157,6 +165,7 @@ pub fn wrap<S: Sample>(
 			println!("throwing away data");
 		}
 */
+/*
 		let mut c = 0;
 		while self.producer.remaining() > 0 { // && c < l {
 //			let v = data[ c ];
@@ -164,6 +173,21 @@ pub fn wrap<S: Sample>(
 //			print!("{} ", v);
 			self.producer.push( v );
 			self.producer.push( v );
+			c += 1;
+		}
+*/
+		let mut c = 0;
+		while self.producer.remaining() > 0 { // && c < l {
+//			let v = data[ c ];
+			if self.wav_player.done() {
+				self.producer.push( 0.0 );
+				self.producer.push( 0.0 );
+			} else {
+				let l = self.wav_player.next_sample( &self.wav_file );
+				let r = self.wav_player.next_sample( &self.wav_file );
+				self.producer.push( l );
+				self.producer.push( r );
+			}
 			c += 1;
 		}
 	}
@@ -179,10 +203,14 @@ pub fn wrap<S: Sample>(
 
 	pub fn load_sound_bank( &mut self, fileloader: &mut impl FileLoader, filename: &str ) {
 //		self.sound_bank.load( fileloader, filename )
+		self.wav_file.load( fileloader, "coin48000.wav" );
+//		dbg!(&self.wav_file);
+//		todo!("die");
 	}
 
 	pub fn play_sound( &mut self, name: &str ) {
 //		self.sound_bank.play( name );
+		self.wav_player.play();
 	}
 
 	pub fn list_devices( &self ) {
