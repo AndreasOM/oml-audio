@@ -7,6 +7,7 @@
 - [ ] Implement SoundBank for miniaudio (might just need SoundPoolMiniaudio)
 - [ ] Implement capturing for apple
 - [ ] Add example to README
+- [ ] Ensure cross compile to linux and windows works
 
 ## DONE
 

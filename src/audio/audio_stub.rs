@@ -6,18 +6,14 @@ use crate::SoundBank;
 
 use std::time::Instant;	// temporary, we get higher precision by calculating from the audio callbacks
 
-pub struct AudioApple {
-	music:			Music,
-	sound_bank:		SoundBank,
+pub struct AudioStub {
 	last_now:		Instant,
 	capture_buffer: Vec< f32 >,
 }
 
-impl AudioApple {
+impl AudioStub {
 	pub fn new() -> Self {
 		Self {
-			music:			Music::new(),
-			sound_bank:		SoundBank::new(),
 	        last_now:		Instant::now(),
 	        capture_buffer:	Vec::new(),
 		}
@@ -27,27 +23,25 @@ impl AudioApple {
         let timestep = self.last_now.elapsed().as_secs_f64();
         self.last_now = Instant::now();
 
-		self.music.update( timestep );
-		self.sound_bank.update( timestep );	
 		timestep
 	}
 
 	pub fn load_music( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
-		self.music.load( fileloader, filename )
+//		self.music.load( fileloader, filename )
 	}
 
 	pub fn play_music( &mut self ) {
-		self.music.play();
+//		self.music.play();
 	}
 
 	pub fn load_sound_bank( &mut self, fileloader: &mut impl FileLoader, filename: &str ) {
-		self.sound_bank.load( fileloader, filename )
+//		self.sound_bank.load( fileloader, filename )
 	}
 
 	pub fn play_sound( &mut self, name: &str ) {
-		self.sound_bank.play( name );
+//		self.sound_bank.play( name );
 	}
-	
+
 	pub fn capture( &mut self, size: usize ) {
 	}
 

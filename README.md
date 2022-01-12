@@ -29,3 +29,30 @@ Features:
 
 Future:
 - [ ] Support other platforms (iOS, android, etc)
+
+
+## Example :WIP:
+
+```rust
+use oml_audio::Audio;
+use oml_audio::fileloader::FileLoaderDisk;
+
+pub fn main() {
+    let mut fileloader = FileLoaderDisk::new( "./data" ); // 'data' is the base directory for all other files/paths
+    fileloader.enable_debug();
+
+    let mut audio = Audio::new();
+    audio.load_sound_bank( &mut fileloader, "test.omsb" );
+
+    audio.play_sound( "SOUND_ID" );
+
+    loop {
+        let _timestep = audio.update();
+
+        // update
+        // render
+        // (maybe) yield/sleep
+    }
+
+}
+```

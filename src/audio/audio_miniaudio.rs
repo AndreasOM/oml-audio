@@ -22,6 +22,8 @@ pub const DEVICE_SAMPLE_RATE: u32 = miniaudio::SAMPLE_RATE_48000;
 use miniaudio::Context;
 
 
+use std::time::Instant;	// temporary, we get higher precision by calculating from the audio callbacks
+
 struct Synth {
 	phase: f32,
 	freq: f32,
@@ -83,14 +85,15 @@ impl Buffer {
 }
 
 pub struct AudioMiniaudio {
-	device:		Device,
-	producer:	ringbuf::Producer< f32 >,
-//	wave:		Waveform,
-	synth:		Synth,
-	wav_file:	WavFile,
-	wav_player: WavPlayer,
-	capture_size: usize,
-	capture_count: usize,
+	device:			Device,
+	producer:		ringbuf::Producer< f32 >,
+	last_now:		Instant,
+//	wave:			Waveform,
+	synth:			Synth,
+	wav_file:		WavFile,
+	wav_player:		WavPlayer,
+	capture_size:	usize,
+	capture_count:	usize,
 	capture_buffer: Vec< f32 >,
 }
 
@@ -137,6 +140,7 @@ impl AudioMiniaudio {
 		Self {
 			device,
 			producer,
+	        last_now: Instant::now(),
 //			wave: sine_wave,
 			synth:	Synth::new( 440.0 ),
 			wav_file: WavFile::new(),
@@ -147,7 +151,10 @@ impl AudioMiniaudio {
 		}
 	}
 
-	pub fn update( &mut self, timestep: f64 ) {
+	pub fn update( &mut self ) -> f64 {
+        let timestep = self.last_now.elapsed().as_secs_f64();
+        self.last_now = Instant::now();
+
 //		self.music.update( timestep );
 //		self.sound_bank.update( timestep );
 		// create temp holder to get data out of waveform
@@ -200,6 +207,8 @@ pub fn wrap<S: Sample>(
 			}
 			c += 1;
 		}
+
+		timestep
 	}
 
 	pub fn load_music( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
@@ -213,9 +222,9 @@ pub fn wrap<S: Sample>(
 
 	pub fn load_sound_bank( &mut self, fileloader: &mut impl FileLoader, filename: &str ) {
 //		self.sound_bank.load( fileloader, filename )
-//		self.wav_file.load( fileloader, "coin48000.wav" );
+		self.wav_file.load( fileloader, "coin48000.wav" );
 //		self.wav_file.load( fileloader, "sine440hz48000.wav" );
-		self.wav_file.load( fileloader, "music.wav" );
+//		self.wav_file.load( fileloader, "music.wav" );
 //		dbg!(&self.wav_file);
 //		todo!("die");
 	}

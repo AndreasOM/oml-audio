@@ -5,8 +5,6 @@ use oml_audio::SoundBank;
 
 use oml_audio::fileloader::FileLoaderDisk;
 
-use std::time::Instant;
-
 pub fn main() {
 	println!("oml-audio !");
 
@@ -32,17 +30,13 @@ pub fn main() {
 //	sound_bank.play( "DEATH" );
 
 	let done = false;
-	let mut last_now = Instant::now();
 	let mut coin_timer = 0.0;
 	let COIN_REPEAT = 0.5;
 
 	let mut powerup_timer = 0.0;
 	let POWERUP_REPEAT = 3.1;
 	while !done {
-		let timestep = last_now.elapsed().as_secs_f64();
-		last_now = Instant::now();
-
-		audio.update( timestep );
+		let timestep =audio.update();
 //		music.update( timestep );
 //		sound_bank.update( timestep );
 
