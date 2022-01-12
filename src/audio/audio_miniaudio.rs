@@ -89,6 +89,9 @@ pub struct AudioMiniaudio {
 	synth:		Synth,
 	wav_file:	WavFile,
 	wav_player: WavPlayer,
+	capture_size: usize,
+	capture_count: usize,
+	capture_buffer: Vec< f32 >,
 }
 
 impl AudioMiniaudio {
@@ -138,6 +141,9 @@ impl AudioMiniaudio {
 			synth:	Synth::new( 440.0 ),
 			wav_file: WavFile::new(),
 			wav_player: WavPlayer::new(),
+			capture_size: 0,
+			capture_count: 0,
+			capture_buffer: Vec::new(),
 		}
 	}
 
@@ -179,14 +185,18 @@ pub fn wrap<S: Sample>(
 		let mut c = 0;
 		while self.producer.remaining() > 0 { // && c < l {
 //			let v = data[ c ];
-			if self.wav_player.done() {
-				self.producer.push( 0.0 );
-				self.producer.push( 0.0 );
+			let ( l, r ) = if self.wav_player.done() {
+				( 0.0, 0.0 )
 			} else {
 				let l = self.wav_player.next_sample( &self.wav_file );
 				let r = self.wav_player.next_sample( &self.wav_file );
-				self.producer.push( l );
-				self.producer.push( r );
+				( l, r )
+			};
+			self.producer.push( l );
+			self.producer.push( r );
+			if self.capture_count < self.capture_size {
+				self.capture_buffer.push( l );
+				self.capture_count += 1;
 			}
 			c += 1;
 		}
@@ -203,7 +213,9 @@ pub fn wrap<S: Sample>(
 
 	pub fn load_sound_bank( &mut self, fileloader: &mut impl FileLoader, filename: &str ) {
 //		self.sound_bank.load( fileloader, filename )
-		self.wav_file.load( fileloader, "coin48000.wav" );
+//		self.wav_file.load( fileloader, "coin48000.wav" );
+//		self.wav_file.load( fileloader, "sine440hz48000.wav" );
+		self.wav_file.load( fileloader, "music.wav" );
 //		dbg!(&self.wav_file);
 //		todo!("die");
 	}
@@ -211,6 +223,17 @@ pub fn wrap<S: Sample>(
 	pub fn play_sound( &mut self, name: &str ) {
 //		self.sound_bank.play( name );
 		self.wav_player.play();
+	}
+
+	pub fn capture( &mut self, size: usize ) {
+		self.capture_buffer.clear();
+		self.capture_buffer.reserve_exact( size );
+		self.capture_size = size;
+		self.capture_count = 0;
+	}
+
+	pub fn capture_buffer_slice( &self ) -> &[f32] {
+		self.capture_buffer.as_slice()
 	}
 
 	pub fn list_devices( &self ) {

@@ -4,6 +4,9 @@
 
 ## TODO
 
+- [ ] Implement SoundBank for miniaudio (might just need SoundPoolMiniaudio)
+- [ ] Implement capturing for apple
+- [ ] Add example to README
 
 ## DONE
 

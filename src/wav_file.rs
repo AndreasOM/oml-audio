@@ -111,8 +111,12 @@ impl WavFile {
 						16 => {
 							for _ in 0..blocks {
 								let w = f.read_u16();
+								let w = unsafe {
+									std::mem::transmute::< u16, i16 >( w )
+								};
+
 								// :TODO:
-								let f = 2.0*( w as f32 )/( 0xffff as f32 ) - 1.0;
+								let f = 2.0*( w as f32 )/( 0xffff as f32 ) - 0.0;
 								self.data.push( f );
 								if channels == 1 {	// :HACK: just duplicate to enforce stereo
 									self.data.push( f );
@@ -139,12 +143,16 @@ impl WavFile {
 					}
 //					return false;
 				},
+				"" => {
+					println!("None chunk ''");
+					break;
+				},
 				_ => {
 					println!("Unhandled chunk type: {:?} size: skipping {}", chunk_type, chunk_size);
 					for _ in 0..chunk_size {
 						f.read_u8();
 					};
-				}
+				},
 			};
 		}
 		false
