@@ -227,6 +227,10 @@ pub fn wrap<S: Sample>(
 //		self.music.play();
 	}
 
+	pub fn pause_music( &mut self ) {
+//		self.music.pause();
+	}
+
 	pub fn load_sound_bank( &mut self, fileloader: &mut impl FileLoader, filename: &str ) {
 		self.sound_bank.load( fileloader, filename );
 //		dbg!(&self.sound_bank);
