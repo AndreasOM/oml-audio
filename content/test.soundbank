@@ -1,5 +1,5 @@
 # id;file;max instances;drop mode;flags (loop);
 
 pickup_coin;coin48000;10;OLDEST;NONE;
-powerup;powerup;2;OLDEST;NONE;
-death;death;1;OLDEST;NONE;
+powerup;powerup48000;2;OLDEST;NONE;
+death;death48000;1;OLDEST;NONE;

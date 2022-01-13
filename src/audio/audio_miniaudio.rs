@@ -3,6 +3,7 @@ use std::cell::RefCell;
 use std::sync::Arc;
 
 use crate::FileLoader;
+use crate::SoundBank;
 use crate::{
 	WavFile,
 	WavPlayer,
@@ -88,10 +89,11 @@ pub struct AudioMiniaudio {
 	device:			Device,
 	producer:		ringbuf::Producer< f32 >,
 	last_now:		Instant,
+	sound_bank:		SoundBank,
 //	wave:			Waveform,
 	synth:			Synth,
-	wav_file:		WavFile,
-	wav_player:		WavPlayer,
+//	wav_file:		WavFile,
+//	wav_player:		WavPlayer,
 	capture_size:	usize,
 	capture_count:	usize,
 	capture_buffer: Vec< f32 >,
@@ -141,10 +143,11 @@ impl AudioMiniaudio {
 			device,
 			producer,
 	        last_now: Instant::now(),
+	        sound_bank:			SoundBank::new(),
 //			wave: sine_wave,
 			synth:	Synth::new( 440.0 ),
-			wav_file: WavFile::new(),
-			wav_player: WavPlayer::new(),
+//			wav_file: WavFile::new(),
+//			wav_player: WavPlayer::new(),
 			capture_size: 0,
 			capture_count: 0,
 			capture_buffer: Vec::new(),
@@ -192,13 +195,8 @@ pub fn wrap<S: Sample>(
 		let mut c = 0;
 		while self.producer.remaining() > 0 { // && c < l {
 //			let v = data[ c ];
-			let ( l, r ) = if self.wav_player.done() {
-				( 0.0, 0.0 )
-			} else {
-				let l = self.wav_player.next_sample( &self.wav_file );
-				let r = self.wav_player.next_sample( &self.wav_file );
-				( l, r )
-			};
+			let l = self.sound_bank.next_sample();
+			let r = self.sound_bank.next_sample();
 			self.producer.push( l );
 			self.producer.push( r );
 			if self.capture_count < self.capture_size {
@@ -221,8 +219,9 @@ pub fn wrap<S: Sample>(
 	}
 
 	pub fn load_sound_bank( &mut self, fileloader: &mut impl FileLoader, filename: &str ) {
-//		self.sound_bank.load( fileloader, filename )
-		self.wav_file.load( fileloader, "coin48000.wav" );
+		self.sound_bank.load( fileloader, filename );
+//		dbg!(&self.sound_bank);
+//		self.wav_file.load( fileloader, "coin48000.wav" );
 //		self.wav_file.load( fileloader, "sine440hz48000.wav" );
 //		self.wav_file.load( fileloader, "music.wav" );
 //		dbg!(&self.wav_file);
@@ -230,8 +229,7 @@ pub fn wrap<S: Sample>(
 	}
 
 	pub fn play_sound( &mut self, name: &str ) {
-//		self.sound_bank.play( name );
-		self.wav_player.play();
+		self.sound_bank.play( name );
 	}
 
 	pub fn capture( &mut self, size: usize ) {

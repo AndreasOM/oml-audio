@@ -55,6 +55,14 @@ impl SoundBank {
 		}
 	}
 
+	pub fn next_sample( &mut self ) -> f32 {
+		let mut v = 0.0;
+		for p in self.sound_pools.values_mut() {
+			v += p.next_sample();
+		}
+		v
+	}
+
 	pub fn enable_debug( &mut self ) {
 		self.debug = true;
 		for sp in self.sound_pools.values_mut() {

@@ -1,6 +1,7 @@
 
 use crate::FileLoader;
 
+use crate::sound::DropMode;
 
 use std::collections::{
 	HashMap,
@@ -9,13 +10,6 @@ use std::collections::{
 
 use objc::*;
 use objc::runtime::*;
-
-#[derive(Debug)]
-enum DropMode {
-	Newest,
-	Oldest,
-	OlderThan,
-}
 
 #[derive(Debug)]
 pub struct SoundPoolApple {
@@ -165,6 +159,11 @@ impl SoundPoolApple {
 	}
 
 	pub fn update( &mut self, _time_step: f64 ) {
+	}
+
+	pub fn next_sample( &mut self ) -> f32 {
+		// just a stub
+		0.0
 	}
 
 	pub fn enable_debug( &mut self ) {

@@ -22,3 +22,6 @@ pub use sound_stub::SoundPoolStub as SoundPool;
 
 mod sound_bank;
 pub use sound_bank::SoundBank as SoundBank;
+
+mod drop_mode;
+pub use drop_mode::DropMode;
