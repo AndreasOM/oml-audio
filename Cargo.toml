@@ -14,8 +14,8 @@ keywords = ["tools", "gamedev"]
 categories = ["multimedia","game-development"]
 
 [features]
-default = [ "apple" ]
-# default = []
+# default = [ "apple" ]
+default = []
 apple = []
 
 [[bin]]
