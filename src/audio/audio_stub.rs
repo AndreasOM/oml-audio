@@ -28,6 +28,7 @@ impl AudioStub {
 
 	pub fn load_music( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
 //		self.music.load( fileloader, filename )
+		true
 	}
 
 	pub fn play_music( &mut self ) {
