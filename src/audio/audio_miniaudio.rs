@@ -25,6 +25,7 @@ use miniaudio::Context;
 
 use std::time::Instant;	// temporary, we get higher precision by calculating from the audio callbacks
 
+#[derive(Debug)]
 struct Synth {
 	phase: f32,
 	freq: f32,
@@ -97,6 +98,14 @@ pub struct AudioMiniaudio {
 	capture_size:	usize,
 	capture_count:	usize,
 	capture_buffer: Vec< f32 >,
+}
+
+impl std::fmt::Debug for AudioMiniaudio {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("AudioMiniaudio")
+         .field("sound_bank", &self.sound_bank)
+         .finish()
+    }
 }
 
 impl AudioMiniaudio {

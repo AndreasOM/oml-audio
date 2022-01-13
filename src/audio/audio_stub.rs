@@ -6,6 +6,7 @@ use crate::SoundBank;
 
 use std::time::Instant;	// temporary, we get higher precision by calculating from the audio callbacks
 
+#[derive(Debug)]
 pub struct AudioStub {
 	last_now:		Instant,
 	capture_buffer: Vec< f32 >,
