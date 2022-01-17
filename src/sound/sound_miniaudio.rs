@@ -85,6 +85,17 @@ impl SoundPoolMiniaudio {
 		}
 	}
 
+	pub fn is_any_sound_playing( &self ) -> bool {
+		for p in self.players.iter() {
+			if p.is_playing() {
+				return true;
+			}
+		}
+
+		false
+	}
+
+
 	pub fn update( &mut self, _time_step: f64 ) {
 	}
 

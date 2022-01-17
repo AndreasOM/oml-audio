@@ -1,3 +1,6 @@
+#![feature(test)]
+
+extern crate test;
 
 use oml_audio::Audio;
 use oml_audio::Music;
@@ -13,6 +16,7 @@ pub fn main() {
 	fileloader.enable_debug();
 
 	let mut audio = Audio::new();
+	audio.start();
 
 //	let mut music = Music::new();
 //	music.load( &mut fileloader, "test.mp3" );
@@ -29,6 +33,8 @@ pub fn main() {
 
 //	sound_bank.play( "DEATH" );
 
+//	audio.play_sound( "MUSIC" );
+
 	let done = false;
 	let mut coin_timer = 0.0;
 	let COIN_REPEAT = 0.5;
@@ -36,7 +42,7 @@ pub fn main() {
 	let mut powerup_timer = 0.0;
 	let POWERUP_REPEAT = 3.1;
 	while !done {
-		let timestep =audio.update();
+		let timestep = audio.update();
 //		music.update( timestep );
 //		sound_bank.update( timestep );
 
@@ -56,5 +62,36 @@ pub fn main() {
 		}
 
 		std::thread::sleep( std::time::Duration::from_millis( 1000/60 ) );
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use oml_audio::Audio;
+	use oml_audio::fileloader::FileLoaderDisk;
+
+	use ringbuf::RingBuffer;
+
+	use super::*;
+	use test::Bencher;
+
+    #[bench]
+    fn sound_fill_buffer( b: &mut Bencher ) {
+		let mut fileloader = FileLoaderDisk::new( "./data" );
+		let mut audio = Audio::new();
+		audio.load_sound_bank( &mut fileloader, "test.omsb" );
+//		audio.play_sound( "PICKUP_COIN" );
+
+		let mut rb = RingBuffer::new( 4*4096 );
+		let ( mut producer, mut consumer ) = rb.split();
+
+    	b.iter( || {
+			audio.play_sound( "PICKUP_COIN" );
+			while audio.is_any_sound_playing() {
+				Audio::fill_buffer( audio.get_sound_bank_mut(), &mut producer );
+				Audio::drain_buffer( &mut consumer );
+//				let timestep = audio.update();
+			}
+		} )
 	}
 }

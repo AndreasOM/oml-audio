@@ -87,8 +87,8 @@ impl Buffer {
 }
 
 pub struct AudioMiniaudio {
-	device:			Device,
-	producer:		ringbuf::Producer< f32 >,
+	device:			Option< Device >,
+	producer:		Option< ringbuf::Producer< f32 > >,
 	last_now:		Instant,
 	sound_bank:		SoundBank,
 //	wave:			Waveform,
@@ -121,6 +121,29 @@ impl AudioMiniaudio {
 		);
 		let mut sine_wave = Waveform::new(&sine_wave_config);
 		*/
+
+/*
+		device_config.set_data_callback(move |_device, output, _input| {
+			buffer.data_output_callback( output );
+		});
+*/
+
+		Self {
+			device:			None,
+			producer:		None,
+	        last_now: Instant::now(),
+	        sound_bank:			SoundBank::new(),
+//			wave: sine_wave,
+			synth:	Synth::new( 440.0 ),
+//			wav_file: WavFile::new(),
+//			wav_player: WavPlayer::new(),
+			capture_size: 0,
+			capture_count: 0,
+			capture_buffer: Vec::new(),
+		}
+	}
+
+	pub fn start( &mut self ) {
 		let mut device_config = DeviceConfig::new(DeviceType::Playback);
 		device_config.playback_mut().set_format(DEVICE_FORMAT);
 		device_config.playback_mut().set_channels(DEVICE_CHANNELS);
@@ -129,12 +152,6 @@ impl AudioMiniaudio {
 		let mut rb = RingBuffer::new( 4*4096 );
 		let ( producer, consumer ) = rb.split();
 		let mut buffer = Buffer::new( consumer );
-
-/*
-		device_config.set_data_callback(move |_device, output, _input| {
-			buffer.data_output_callback( output );
-		});
-*/
 
 		device_config.set_stop_callback(|_device| {
 		    println!("Device Stopped.");
@@ -148,20 +165,11 @@ impl AudioMiniaudio {
 
 		println!("Device Backend: {:?}", device.context().backend());
 
-		Self {
-			device,
-			producer,
-	        last_now: Instant::now(),
-	        sound_bank:			SoundBank::new(),
-//			wave: sine_wave,
-			synth:	Synth::new( 440.0 ),
-//			wav_file: WavFile::new(),
-//			wav_player: WavPlayer::new(),
-			capture_size: 0,
-			capture_count: 0,
-			capture_buffer: Vec::new(),
-		}
+		self.device = Some( device );
+		self.producer = Some( producer );
 	}
+
+
 
 	pub fn update( &mut self ) -> f64 {
         let timestep = self.last_now.elapsed().as_secs_f64();
@@ -201,21 +209,47 @@ pub fn wrap<S: Sample>(
 			c += 1;
 		}
 */
+
+		if let Some( producer ) = &mut self.producer {
+			AudioMiniaudio::fill_buffer( &mut self.sound_bank, producer );
+		}
+		timestep
+	}
+
+	pub fn get_sound_bank_mut( &mut self ) -> &mut SoundBank {
+		&mut self.sound_bank
+	}
+
+	pub fn fill_buffer( sound_bank: &mut SoundBank, producer: &mut ringbuf::Producer< f32 > ) -> usize {
 		let mut c = 0;
-		while self.producer.remaining() > 0 { // && c < l {
+		while producer.remaining() > 0 { // && c < l {
 //			let v = data[ c ];
-			let l = self.sound_bank.next_sample();
-			let r = self.sound_bank.next_sample();
-			self.producer.push( l );
-			self.producer.push( r );
+
+			let l = sound_bank.next_sample();
+			let r = sound_bank.next_sample();
+			producer.push( l );
+			producer.push( r );
+			
+			/*
 			if self.capture_count < self.capture_size {
 				self.capture_buffer.push( l );
 				self.capture_count += 1;
 			}
+			*/
 			c += 1;
 		}
 
-		timestep
+		dbg!(c);
+		c
+	}
+
+	pub fn drain_buffer( consumer: &mut ringbuf::Consumer< f32 > ) -> usize {
+		let mut c = 0;
+		while let Some( v ) = consumer.pop() {
+			c += 1;
+		}
+
+		c
 	}
 
 	pub fn load_music( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
@@ -243,6 +277,10 @@ pub fn wrap<S: Sample>(
 
 	pub fn play_sound( &mut self, name: &str ) {
 		self.sound_bank.play( name );
+	}
+
+	pub fn is_any_sound_playing( &self ) -> bool {
+		self.sound_bank.is_any_sound_playing()
 	}
 
 	pub fn capture( &mut self, size: usize ) {

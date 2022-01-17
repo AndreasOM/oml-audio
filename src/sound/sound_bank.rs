@@ -49,6 +49,16 @@ impl SoundBank {
 		}
 	}
 
+	pub fn is_any_sound_playing( &self ) -> bool {
+		for sound in self.sound_pools.values() {
+			if sound.is_any_sound_playing() {
+				return true
+			}
+		}
+
+		false
+	}
+
 	pub fn update( &mut self, timestep: f64 ) {
 		for sound in self.sound_pools.values_mut() {
 			sound.update( timestep );
