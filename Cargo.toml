@@ -13,6 +13,8 @@ repository = "https://github.com/AndreasOM/oml-audio"
 keywords = ["tools", "gamedev"]
 categories = ["multimedia","game-development"]
 
+default-run="oml-audio"
+
 [features]
 # default = [ "use_apple" ]
 default = []
@@ -22,6 +24,12 @@ use_miniaudio = []
 [[bin]]
 name="oml-audio"
 path="src/oml_audio_main.rs"
+
+[[bin]]
+# run with
+# `cargo +nightly bench --bin=benchmark -v --features=use_miniaudio`
+name="benchmark"
+path="src/benchmark.rs"
 
 [dependencies]
 #miniaudio = { version = "0.10.0", features = [ "ma-no-decoding", "ma-log-level-verbose", "ma-debug-output" ] }
