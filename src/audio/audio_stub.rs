@@ -10,6 +10,7 @@ use std::time::Instant;	// temporary, we get higher precision by calculating fro
 pub struct AudioStub {
 	last_now:		Instant,
 	capture_buffer: Vec< f32 >,
+	sound_bank:		SoundBank,
 }
 
 impl AudioStub {
@@ -17,7 +18,23 @@ impl AudioStub {
 		Self {
 	        last_now:		Instant::now(),
 	        capture_buffer:	Vec::new(),
+	        sound_bank:		SoundBank::new(),
 		}
+	}
+
+	pub fn start( &mut self ) {
+	}	
+
+	pub fn get_sound_bank_mut( &mut self ) -> &mut SoundBank {
+		&mut self.sound_bank
+	}
+
+	pub fn fill_buffer( _sound_bank: &mut SoundBank, _producer: &mut ringbuf::Producer< f32 > ) -> usize {
+		0
+	}
+
+	pub fn drain_buffer( _consumer: &mut ringbuf::Consumer< f32 > ) -> usize {
+		0
 	}
 
 	pub fn update( &mut self ) -> f64 {
@@ -45,6 +62,10 @@ impl AudioStub {
 
 	pub fn play_sound( &mut self, name: &str ) {
 //		self.sound_bank.play( name );
+	}
+
+	pub fn is_any_sound_playing( &self ) -> bool {
+		false
 	}
 
 	pub fn capture( &mut self, size: usize ) {

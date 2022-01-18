@@ -14,9 +14,10 @@ keywords = ["tools", "gamedev"]
 categories = ["multimedia","game-development"]
 
 [features]
-# default = [ "apple" ]
+# default = [ "use_apple" ]
 default = []
-apple = []
+use_apple = []
+use_miniaudio = []
 
 [[bin]]
 name="oml-audio"

@@ -1,12 +1,12 @@
 
-#[cfg(all(target_os = "macos", feature = "apple"))]
+#[cfg(all(target_os = "macos", feature = "use_apple"))]
 mod sound_apple;
-#[cfg(all(target_os = "macos", feature = "apple"))]
+#[cfg(all(target_os = "macos", feature = "use_apple"))]
 pub use sound_apple::SoundPoolApple as SoundPool;
 
-#[cfg(all(target_os = "macos", not( feature = "apple" ) ))]
+#[cfg(all(target_os = "macos", not( feature = "use_apple" ) ))]
 mod sound_miniaudio;
-#[cfg(all(target_os = "macos", not( feature = "apple" ) ))]
+#[cfg(all(target_os = "macos", not( feature = "use_apple" ) ))]
 pub use sound_miniaudio::SoundPoolMiniaudio as SoundPool;
 
 #[cfg(target_os = "windows")]
