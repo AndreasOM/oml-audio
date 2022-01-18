@@ -158,6 +158,19 @@ impl SoundPoolApple {
 		}
 	}
 
+	pub fn is_any_sound_playing( &self ) -> bool {
+		for player in self.players.iter() {
+			unsafe {
+				let playing: bool = msg_send![ *player, isPlaying ];
+				if playing {
+					return true;
+				}
+			}			
+		}
+
+		false
+	}
+
 	pub fn update( &mut self, _time_step: f64 ) {
 	}
 
