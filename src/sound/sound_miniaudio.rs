@@ -99,14 +99,12 @@ impl SoundPoolMiniaudio {
 	pub fn update( &mut self, _time_step: f64 ) {
 	}
 
-	pub fn next_sample( &mut self ) -> f32 {
-		let mut v = 0.0;
+	pub fn fill_slice( &mut self, slice: &mut [f32] ) {
 		for p in self.players.iter_mut() {
 			if p.is_playing() {
-				v += p.next_sample( &self.wav_file );
+				p.fill_slice( &self.wav_file, slice );
 			}
 		}
-		v
 	}
 
 	pub fn enable_debug( &mut self ) {

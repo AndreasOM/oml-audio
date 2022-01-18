@@ -161,9 +161,7 @@ impl SoundPoolApple {
 	pub fn update( &mut self, _time_step: f64 ) {
 	}
 
-	pub fn next_sample( &mut self ) -> f32 {
-		// just a stub
-		0.0
+	pub fn fill_slice( &mut self, _slice: &mut [f32] ) {
 	}
 
 	pub fn enable_debug( &mut self ) {

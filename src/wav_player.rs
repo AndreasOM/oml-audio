@@ -37,15 +37,16 @@ impl WavPlayer {
 		self.pos = 0;	// :TODO:
 	}
 
-	pub fn next_sample( &mut self, wav_file: &WavFile ) -> f32 {
+	pub fn fill_slice( &mut self, wav_file: &WavFile, slice: &mut [f32] ) {
 		let data = wav_file.data();
-		if self.pos >= data.len() {
-			self.done = true;
-			0.0
-		} else {
-			let v = data[ self.pos ];
-			self.pos += 1;
-			v
-		}
+		for e in slice.iter_mut() {
+			if self.pos >= data.len() {
+				self.done = true;
+			} else {
+				let v = data[ self.pos ];
+				self.pos += 1;
+				*e += v;
+			};
+		};
 	}
 }

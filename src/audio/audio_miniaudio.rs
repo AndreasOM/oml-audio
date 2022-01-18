@@ -221,23 +221,18 @@ pub fn wrap<S: Sample>(
 	}
 
 	pub fn fill_buffer( sound_bank: &mut SoundBank, producer: &mut ringbuf::Producer< f32 > ) -> usize {
-		let mut c = 0;
-		while producer.remaining() > 0 { // && c < l {
-//			let v = data[ c ];
+		let c = producer.remaining();
 
-			let l = sound_bank.next_sample();
-			let r = sound_bank.next_sample();
-			producer.push( l );
-			producer.push( r );
-			
-			/*
-			if self.capture_count < self.capture_size {
-				self.capture_buffer.push( l );
-				self.capture_count += 1;
-			}
-			*/
-			c += 1;
-		}
+		let mut buffer = Vec::with_capacity( c );
+		for _ in 0..c {
+			buffer.push( 0.0 );
+		};
+
+		let mut buffer = buffer.as_mut_slice();
+
+		sound_bank.fill_slice( &mut buffer );
+
+		producer.push_slice( buffer );
 
 		dbg!(c);
 		c
