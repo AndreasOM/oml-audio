@@ -3,6 +3,10 @@
 extern crate test;
 
 
+pub fn main() {
+	println!("oml-audio BENCHMARK -> run via cargo bench ...");
+}
+
 #[cfg(test)]
 mod tests {
 	use oml_audio::Audio;
