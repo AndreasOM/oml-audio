@@ -22,6 +22,10 @@ impl SoundPoolStub {
 	pub fn play( &mut self ) {
 	}
 
+	pub fn is_any_sound_playing( &self ) -> bool {
+		false
+	}
+
 	pub fn update( &mut self, _time_step: f64 ) {
 	}
 
