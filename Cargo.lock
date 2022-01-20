@@ -186,9 +186,9 @@ dependencies = [
 
 [[package]]
 name = "om-fork-miniaudio"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34723e06b0a4873bf5759bb314445b6a8f33002cf65e4afd2d85e78ffd64e79b"
+checksum = "d72818d7af1f69f57feab66567363298d218dbf96bdddbae86d8223554ba0c72"
 dependencies = [
  "bitflags",
  "om-fork-ep-miniaudio-sys",

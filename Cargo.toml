@@ -42,13 +42,13 @@ version = "0.10.2"
 optional = true
 
 [dependencies.om-fork-miniaudio]
-version = "0.11.0"
+version = "0.12.0"
 features = [ "ma-no-decoding", "ma-log-level-verbose" ]
 optional = true
 #path = "../miniaudio-rs/miniaudio"
 
 [dependencies.om-fork-ep-miniaudio-sys]
-version = "2.5.0"
+version = "2.6.0"
 optional = true
 # features = [ "ma-no-decoding", "ma-log-level-verbose" ]
 # path = "../miniaudio-rs/miniaudio-sys"
@@ -59,6 +59,7 @@ cfg_aliases = "0.1.1"
 [patch.crates-io]
 #ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
 #miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
+
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"
