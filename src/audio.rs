@@ -15,10 +15,15 @@ mod audio_stub;
 pub use audio_stub::AudioStub as Audio;
 
 
-#[cfg(target_os = "windows")]
+#[cfg(all(target_os = "windows", not( any( feature= "use_miniaudio"  ) ) ) )]
 mod audio_stub;
-#[cfg(target_os = "windows")]
+#[cfg(all(target_os = "windows", not( any( feature= "use_miniaudio"  ) ) ) )]
 pub use audio_stub::AudioStub as Audio;
+
+#[cfg(all(target_os = "windows", feature = "use_miniaudio"))]
+mod audio_miniaudio;
+#[cfg(all(target_os = "windows", feature = "use_miniaudio"))]
+pub use audio_miniaudio::AudioMiniaudio as Audio;
 
 #[cfg(target_os = "linux")]
 mod audio_stub;
