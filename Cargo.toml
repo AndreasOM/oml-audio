@@ -19,7 +19,8 @@ default-run="oml-audio"
 # default = [ "use_apple" ]
 default = []
 use_apple = []
-use_miniaudio = []
+use_miniaudio = [ "dep:miniaudio", "dep:ep-miniaudio-sys", "dep:lewton" ]
+use_stub = []
 
 [[bin]]
 name="oml-audio"
@@ -36,15 +37,24 @@ path="src/benchmark.rs"
 #miniaudio = { version = "0.10.0", features = [ "ma-no-decoding", "ma-log-level-verbose" ] }
 ringbuf = "0.2.6"
 
+[dependencies.lewton]
+version = "0.10.2"
+optional = true
+
 [dependencies.miniaudio]
 version = "0.11.0"
 features = [ "ma-no-decoding", "ma-log-level-verbose" ]
+optional = true
 #path = "../miniaudio-rs/miniaudio"
 
 [dependencies.ep-miniaudio-sys]
 version = "2.5.0"
+optional = true
 # features = [ "ma-no-decoding", "ma-log-level-verbose" ]
 # path = "../miniaudio-rs/miniaudio-sys"
+
+[build-dependencies]
+cfg_aliases = "0.1.1"
 
 [patch.crates-io]
 ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
