@@ -14,13 +14,9 @@ pub fn main() {
 	let mut audio = Audio::new();
 	audio.start();
 
-//	let mut music = Music::new();
-//	music.load( &mut fileloader, "test.mp3" );
-//	music.play();
-
-	audio.load_music( &mut fileloader, "test.mp3" );
+//	audio.load_music( &mut fileloader, "test.mp3" );
+	audio.load_music_native( &mut fileloader, "test" );
 	audio.play_music();
-
 
 	audio.load_sound_bank( &mut fileloader, "test.omsb" );
 

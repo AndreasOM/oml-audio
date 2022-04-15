@@ -52,6 +52,11 @@ impl AudioApple {
 		self.music.load( fileloader, filename )
 	}
 
+	pub fn load_music_native( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
+		let filename = format!("{}.mp3", filename );
+		self.music.load( fileloader, &filename )
+	}
+
 	pub fn play_music( &mut self ) {
 		self.music.play();
 	}

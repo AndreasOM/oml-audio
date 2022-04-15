@@ -3,6 +3,7 @@ use std::cell::RefCell;
 use std::sync::Arc;
 
 use crate::FileLoader;
+use crate::Music;
 use crate::SoundBank;
 use crate::{
 	WavFile,
@@ -91,6 +92,7 @@ pub struct AudioMiniaudio {
 	producer:		Option< ringbuf::Producer< f32 > >,
 	last_now:		Instant,
 	sound_bank:		SoundBank,
+	music:			Music,
 //	wave:			Waveform,
 	synth:			Synth,
 //	wav_file:		WavFile,
@@ -133,6 +135,7 @@ impl AudioMiniaudio {
 			producer:		None,
 	        last_now: Instant::now(),
 	        sound_bank:			SoundBank::new(),
+	        music:				Music::new(),
 //			wave: sine_wave,
 			synth:	Synth::new( 440.0 ),
 //			wav_file: WavFile::new(),
@@ -175,44 +178,13 @@ impl AudioMiniaudio {
         let timestep = self.last_now.elapsed().as_secs_f64();
         self.last_now = Instant::now();
 
-//		self.music.update( timestep );
-//		self.sound_bank.update( timestep );
-		// create temp holder to get data out of waveform
-/*
-pub fn wrap<S: Sample>(
-    data: &'s mut [S],
-    format: Format,
-    channels: u32
-) -> FramesMut<'s>
-*/
-//		let l = self.producer.remaining();
-/*
-		let mut data = [0f32;4096];
-
-		let mut frames = FramesMut::wrap( &mut data, DEVICE_FORMAT, DEVICE_CHANNELS );
-
-		let l = self.wave.read_pcm_frames( &mut frames ) as usize;
-//		dbg!(l);
-
-		if self.producer.remaining() < l {
-			println!("throwing away data");
-		}
-*/
-/*
-		let mut c = 0;
-		while self.producer.remaining() > 0 { // && c < l {
-//			let v = data[ c ];
-			let v = self.synth.next_sample();
-//			print!("{} ", v);
-			self.producer.push( v );
-			self.producer.push( v );
-			c += 1;
-		}
-*/
+		self.music.update( timestep );
+		self.sound_bank.update( timestep );
 
 		if let Some( producer ) = &mut self.producer {
 			AudioMiniaudio::fill_buffer( &mut self.sound_bank, producer );
 		}
+
 		timestep
 	}
 
@@ -248,26 +220,24 @@ pub fn wrap<S: Sample>(
 	}
 
 	pub fn load_music( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
-//		self.music.load( fileloader, filename )
-		true
+		self.music.load( fileloader, filename )
+	}
+
+	pub fn load_music_native( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
+		let filename = format!("{}.ogg", filename );
+		self.music.load( fileloader, &filename )
 	}
 
 	pub fn play_music( &mut self ) {
-//		self.music.play();
+		self.music.play();
 	}
 
 	pub fn pause_music( &mut self ) {
-//		self.music.pause();
+		self.music.pause();
 	}
 
 	pub fn load_sound_bank( &mut self, fileloader: &mut impl FileLoader, filename: &str ) {
 		self.sound_bank.load( fileloader, filename );
-//		dbg!(&self.sound_bank);
-//		self.wav_file.load( fileloader, "coin48000.wav" );
-//		self.wav_file.load( fileloader, "sine440hz48000.wav" );
-//		self.wav_file.load( fileloader, "music.wav" );
-//		dbg!(&self.wav_file);
-//		todo!("die");
 	}
 
 	pub fn play_sound( &mut self, name: &str ) {
