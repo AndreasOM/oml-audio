@@ -12,10 +12,12 @@ pub fn main() {
 	fileloader.enable_debug();
 
 	let mut audio = Audio::new();
-	audio.start();
+//	audio.start();
 
 //	audio.load_music( &mut fileloader, "test.mp3" );
 	audio.load_music_native( &mut fileloader, "test" );
+
+	audio.start();
 	audio.play_music();
 
 	audio.load_sound_bank( &mut fileloader, "test.omsb" );

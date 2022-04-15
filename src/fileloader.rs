@@ -8,6 +8,8 @@ pub trait FileLoaderFile {
 	fn read_u8( &mut self ) -> u8;
 	fn eof( &self ) -> bool;
 	fn name( &self ) -> &str;
+	fn pos( &self ) -> usize;
+	fn set_pos( &mut self, pos: usize ) -> usize;
 
 	fn read_u16( &mut self ) -> u16 {
 		let a = self.read_u8() as u16;
@@ -28,8 +30,61 @@ pub trait FileLoaderFile {
 		| ( b <<  8 )
 		| ( a <<  0 )
 	}
+
+	fn debug(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+		f.debug_struct("FileLoaderFile")
+			.finish()		
+	}
 }
 
+impl Read for dyn FileLoaderFile {
+	fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize>
+	{
+		let mut cnt = 0;
+
+
+		for b in buf.iter_mut() {
+			if self.eof() {
+				break;
+			};
+
+			let v = self.read_u8();
+			*b = v;
+			cnt += 1;
+		}
+
+		Ok( cnt )
+	}
+}
+
+impl Seek for dyn FileLoaderFile {
+	fn seek(&mut self, pos: SeekFrom) -> std::io::Result<u64>
+	{
+		todo!("seek");
+		eprintln!("Seeking {:?}", &pos );
+		let new_pos = match pos {
+			SeekFrom::Start( pos ) => {
+				pos
+			},
+			SeekFrom::End( delta ) => {
+				panic!("SeekFrom::End not supported {}", delta);
+				0
+			},
+			SeekFrom::Current( delta ) => {
+				( self.pos() as i64 + delta ) as u64
+			},
+		};
+
+		let p = self.set_pos( new_pos as usize ) as u64;
+		Ok( p )
+	}
+}
+
+impl std::fmt::Debug for dyn FileLoaderFile {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+		self.debug( f )
+	}
+}
 
 pub trait FileLoader {
 	fn open( &mut self, filename: &str ) -> Box< dyn FileLoaderFile >;
@@ -97,7 +152,32 @@ impl FileLoaderFile for FileLoaderFileDisk {
 	}
 	fn name( &self ) -> &str {
 		&self.filename
-	}	
+	}
+
+	fn pos( &self ) -> usize
+	{
+		self.pos
+	}
+
+	fn set_pos( &mut self, pos: usize ) -> usize
+	{
+		let max_pos = self.size.saturating_sub( 1 );
+		self.pos = if pos > max_pos {
+			max_pos
+		} else {
+			pos
+		};
+
+		self.pos
+	}
+
+	fn debug(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+		f.debug_struct("FileLoaderFileDisk")
+			.field("filename", &self.filename)
+			.field("size", &self.size)
+			.field("pos", &self.pos)
+			.finish()
+	}
 }
 
 pub struct FileLoaderDisk {

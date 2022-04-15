@@ -2,9 +2,10 @@
 
 ## In Progress
 
-- [ ] Play music (.ogg) with miniaudio
 
 ## TODO
+
+- [ ] Expose buffer size tuning to user
 
 - [ ] Implement capturing for apple
 - [ ] Ensure cross compile to linux and windows works
@@ -17,6 +18,7 @@
 
 ## DONE
 
+- [x] Play music (.ogg) with miniaudio
 - [x] Implement SoundBank for miniaudio (might just need SoundPoolMiniaudio)
 - [x] Add example to README
 - [x] Use feature flag to enable apple specific implementation

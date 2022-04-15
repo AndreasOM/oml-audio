@@ -182,7 +182,7 @@ impl AudioMiniaudio {
 		self.sound_bank.update( timestep );
 
 		if let Some( producer ) = &mut self.producer {
-			AudioMiniaudio::fill_buffer( &mut self.sound_bank, producer );
+			AudioMiniaudio::fill_buffer( &mut self.sound_bank, &mut self.music, producer );
 		}
 
 		timestep
@@ -192,7 +192,7 @@ impl AudioMiniaudio {
 		&mut self.sound_bank
 	}
 
-	pub fn fill_buffer( sound_bank: &mut SoundBank, producer: &mut ringbuf::Producer< f32 > ) -> usize {
+	pub fn fill_buffer( sound_bank: &mut SoundBank, music: &mut Music, producer: &mut ringbuf::Producer< f32 > ) -> usize {
 		let c = producer.remaining();
 
 		let mut buffer = Vec::with_capacity( c );
@@ -203,6 +203,8 @@ impl AudioMiniaudio {
 		let mut buffer = buffer.as_mut_slice();
 
 		sound_bank.fill_slice( &mut buffer );
+
+		music.fill_slice( &mut buffer );
 
 		producer.push_slice( buffer );
 
