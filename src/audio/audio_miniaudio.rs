@@ -271,6 +271,7 @@ pub fn wrap<S: Sample>(
 	}
 
 	pub fn play_sound( &mut self, name: &str ) {
+		println!("Playing {}", &name);
 		self.sound_bank.play( name );
 	}
 

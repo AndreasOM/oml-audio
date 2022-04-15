@@ -9,10 +9,15 @@ mod sound_miniaudio;
 #[cfg(all(target_os = "macos", not( feature = "use_apple" ) ))]
 pub use sound_miniaudio::SoundPoolMiniaudio as SoundPool;
 
-#[cfg(target_os = "windows")]
+#[cfg(all(target_os = "windows", not( any( feature= "use_miniaudio"  ) ) ) )]
 mod sound_stub;
-#[cfg(target_os = "windows")]
+#[cfg(all(target_os = "windows", not( any( feature= "use_miniaudio"  ) ) ) )]
 pub use sound_stub::SoundPoolStub as SoundPool;
+
+#[cfg(all(target_os = "windows", feature = "use_miniaudio"))]
+mod sound_miniaudio;
+#[cfg(all(target_os = "windows", feature = "use_miniaudio"))]
+pub use sound_miniaudio::SoundPoolMiniaudio as SoundPool;
 
 #[cfg(target_os = "linux")]
 mod sound_stub;

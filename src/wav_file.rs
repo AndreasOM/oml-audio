@@ -2,9 +2,16 @@
 use crate::FileLoader;
 
 
-#[derive(Debug)]
 pub struct WavFile {
 	data: Vec< f32 >,
+}
+
+impl std::fmt::Debug for WavFile {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		f.debug_struct("WavFile")
+			.field("data length", &self.data.len())
+			.finish()
+	}
 }
 
 impl WavFile {
