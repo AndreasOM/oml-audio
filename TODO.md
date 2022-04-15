@@ -2,12 +2,18 @@
 
 ## In Progress
 
+- [ ] Play music (.ogg) with miniaudio
+
 ## TODO
 
 - [ ] Implement capturing for apple
 - [ ] Ensure cross compile to linux and windows works
 
 - [ ] Split sound and sound pool logic
+
+- [ ] Run post push github action to catch errors
+- [ ] Publish package via github action
+
 
 ## DONE
 
