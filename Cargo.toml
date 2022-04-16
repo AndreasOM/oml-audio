@@ -26,11 +26,11 @@ use_stub = []
 name="oml-audio"
 path="src/oml_audio_main.rs"
 
-[[bin]]
+##[[bin]]
 # run with
 # `cargo +nightly bench --bin=benchmark -v --features=use_miniaudio`
-name="benchmark"
-path="src/benchmark.rs"
+##name="benchmark"
+##path="src/benchmark.rs"
 
 [dependencies]
 #miniaudio = { version = "0.10.0", features = [ "ma-no-decoding", "ma-log-level-verbose", "ma-debug-output" ] }
