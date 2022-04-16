@@ -46,7 +46,7 @@ impl MusicMiniaudio {
 		let mut srr = match OggStreamReader::new(f) {
 			Ok( srr ) => srr,
 			Err( e ) => {
-				eprintln!( "Error opening Ogg: {:?}", &e);
+				eprintln!( "Error opening Ogg: {}, {:?}", &filename, &e);
 				todo!("");
 				return false;
 			},
