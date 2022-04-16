@@ -193,7 +193,7 @@ dependencies = [
 
 [[package]]
 name = "oml-audio"
-version = "0.6.4-alpha"
+version = "0.6.5-dev"
 dependencies = [
  "cfg_aliases",
  "ep-miniaudio-sys",
