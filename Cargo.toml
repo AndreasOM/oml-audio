@@ -19,7 +19,7 @@ default-run="oml-audio"
 # default = [ "use_apple" ]
 default = []
 use_apple = []
-use_miniaudio = [ "dep:miniaudio", "dep:ep-miniaudio-sys", "dep:lewton" ]
+use_miniaudio = [ "dep:om-fork-miniaudio", "dep:om-fork-ep-miniaudio-sys", "dep:lewton" ]
 use_stub = []
 
 [[bin]]
@@ -41,13 +41,13 @@ ringbuf = "0.2.6"
 version = "0.10.2"
 optional = true
 
-[dependencies.miniaudio]
+[dependencies.om-fork-miniaudio]
 version = "0.11.0"
 features = [ "ma-no-decoding", "ma-log-level-verbose" ]
 optional = true
 #path = "../miniaudio-rs/miniaudio"
 
-[dependencies.ep-miniaudio-sys]
+[dependencies.om-fork-ep-miniaudio-sys]
 version = "2.5.0"
 optional = true
 # features = [ "ma-no-decoding", "ma-log-level-verbose" ]
@@ -57,8 +57,8 @@ optional = true
 cfg_aliases = "0.1.1"
 
 [patch.crates-io]
-ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
-miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
+#ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
+#miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"
