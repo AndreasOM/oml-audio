@@ -5,6 +5,10 @@
 
 ## TODO
 
+- [ ] Use tracing for output
+- [ ] Reduce debug noise
+- [ ] Implement `pause_music` for miniaudio.
+- [ ] Add better setup error information in debug mode, e.g. `update` called before `start`.
 - [ ] Expose buffer size tuning to user
 
 - [ ] Implement capturing for apple
