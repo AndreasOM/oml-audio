@@ -15,6 +15,7 @@ pub struct AudioStub {
 
 impl AudioStub {
 	pub fn new() -> Self {
+		eprintln!("Warning: Using STUB for all oml-audio!\nSelect a backend via a feature.");
 		Self {
 	        last_now:		Instant::now(),
 	        capture_buffer:	Vec::new(),
@@ -45,6 +46,11 @@ impl AudioStub {
 	}
 
 	pub fn load_music( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
+//		self.music.load( fileloader, filename )
+		true
+	}
+
+	pub fn load_music_native( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
 //		self.music.load( fileloader, filename )
 		true
 	}

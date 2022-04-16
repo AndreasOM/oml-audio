@@ -9,7 +9,8 @@ pub fn main() {
 
 	#[cfg(not(any(feature = "use_apple",feature = "use_miniaudio")))]
 	{
-		panic!("Warning no backend selected. Stub would be used.");
+//		panic!("Warning no backend selected. Stub would be used.");
+		// :TODO: emit warning
 	}
 
 	#[cfg(all(feature = "use_apple", not(target_os = "macos" )))]
