@@ -1,35 +1,32 @@
+use oml_audio::fileloader::FileLoaderDisk;
 use oml_audio::Audio;
 use oml_audio::Music;
 use oml_audio::SoundBank;
 
-use oml_audio::fileloader::FileLoaderDisk;
-
 pub fn main() {
 	println!("oml-audio !");
 
-
-	let mut fileloader = FileLoaderDisk::new( "./data" );
+	let mut fileloader = FileLoaderDisk::new("./data");
 	fileloader.enable_debug();
 
 	let mut audio = Audio::new();
 	audio.start();
 
-//	let mut music = Music::new();
-//	music.load( &mut fileloader, "test.mp3" );
-//	music.play();
+	//	let mut music = Music::new();
+	//	music.load( &mut fileloader, "test.mp3" );
+	//	music.play();
 
-	audio.load_music( &mut fileloader, "test.mp3" );
+	audio.load_music(&mut fileloader, "test.mp3");
 	audio.play_music();
 
+	audio.load_sound_bank(&mut fileloader, "test.omsb");
 
-	audio.load_sound_bank( &mut fileloader, "test.omsb" );
+	//	let mut sound_bank = SoundBank::new();
+	//	sound_bank.load( &mut fileloader, "test.omsb" );
 
-//	let mut sound_bank = SoundBank::new();
-//	sound_bank.load( &mut fileloader, "test.omsb" );
+	//	sound_bank.play( "DEATH" );
 
-//	sound_bank.play( "DEATH" );
-
-//	audio.play_sound( "MUSIC" );
+	//	audio.play_sound( "MUSIC" );
 
 	let done = false;
 	let mut coin_timer = 0.0;
@@ -39,25 +36,24 @@ pub fn main() {
 	let POWERUP_REPEAT = 3.1;
 	while !done {
 		let timestep = audio.update();
-//		music.update( timestep );
-//		sound_bank.update( timestep );
+		//		music.update( timestep );
+		//		sound_bank.update( timestep );
 
 		coin_timer += timestep;
 
 		while coin_timer > COIN_REPEAT {
 			coin_timer -= COIN_REPEAT;
-//			sound_bank.play( "PICKUP_COIN" );
-			audio.play_sound( "PICKUP_COIN" );
+			//			sound_bank.play( "PICKUP_COIN" );
+			audio.play_sound("PICKUP_COIN");
 		}
 
 		powerup_timer += timestep;
 		while powerup_timer > POWERUP_REPEAT {
 			powerup_timer -= POWERUP_REPEAT;
-//			sound_bank.play( "POWERUP" );
-			audio.play_sound( "POWERUP" );
+			//			sound_bank.play( "POWERUP" );
+			audio.play_sound("POWERUP");
 		}
 
-		std::thread::sleep( std::time::Duration::from_millis( 1000/60 ) );
+		std::thread::sleep(std::time::Duration::from_millis(1000 / 60));
 	}
 }
-
