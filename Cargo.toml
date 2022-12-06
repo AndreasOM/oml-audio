@@ -60,6 +60,5 @@ cfg_aliases = "0.1.1"
 #ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
 #miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
 
-
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"
