@@ -3,12 +3,12 @@ use std::io::prelude::*;
 use std::io::{BufReader, SeekFrom};
 
 pub trait FileLoaderFile {
-	fn is_valid( &self ) -> bool;
-	fn read_u8( &mut self ) -> u8;
-	fn eof( &self ) -> bool;
-	fn name( &self ) -> &str;
-	fn pos( &self ) -> usize;
-	fn set_pos( &mut self, pos: usize ) -> usize;
+	fn is_valid(&self) -> bool;
+	fn read_u8(&mut self) -> u8;
+	fn eof(&self) -> bool;
+	fn name(&self) -> &str;
+	fn pos(&self) -> usize;
+	fn set_pos(&mut self, pos: usize) -> usize;
 
 	fn read_u16(&mut self) -> u16 {
 		let a = self.read_u8() as u16;
@@ -27,16 +27,13 @@ pub trait FileLoaderFile {
 	}
 
 	fn debug(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-		f.debug_struct("FileLoaderFile")
-			.finish()		
+		f.debug_struct("FileLoaderFile").finish()
 	}
 }
 
 impl Read for dyn FileLoaderFile {
-	fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize>
-	{
+	fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
 		let mut cnt = 0;
-
 
 		for b in buf.iter_mut() {
 			if self.eof() {
@@ -48,36 +45,31 @@ impl Read for dyn FileLoaderFile {
 			cnt += 1;
 		}
 
-		Ok( cnt )
+		Ok(cnt)
 	}
 }
 
 impl Seek for dyn FileLoaderFile {
-	fn seek(&mut self, pos: SeekFrom) -> std::io::Result<u64>
-	{
+	fn seek(&mut self, pos: SeekFrom) -> std::io::Result<u64> {
 		todo!("seek");
-		eprintln!("Seeking {:?}", &pos );
+		eprintln!("Seeking {:?}", &pos);
 		let new_pos = match pos {
-			SeekFrom::Start( pos ) => {
-				pos
-			},
-			SeekFrom::End( delta ) => {
+			SeekFrom::Start(pos) => pos,
+			SeekFrom::End(delta) => {
 				panic!("SeekFrom::End not supported {}", delta);
 				0
 			},
-			SeekFrom::Current( delta ) => {
-				( self.pos() as i64 + delta ) as u64
-			},
+			SeekFrom::Current(delta) => (self.pos() as i64 + delta) as u64,
 		};
 
-		let p = self.set_pos( new_pos as usize ) as u64;
-		Ok( p )
+		let p = self.set_pos(new_pos as usize) as u64;
+		Ok(p)
 	}
 }
 
 impl std::fmt::Debug for dyn FileLoaderFile {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
-		self.debug( f )
+		self.debug(f)
 	}
 }
 
@@ -142,19 +134,13 @@ impl FileLoaderFile for FileLoaderFileDisk {
 	fn name(&self) -> &str {
 		&self.filename
 	}
-	fn pos( &self ) -> usize
-	{
+	fn pos(&self) -> usize {
 		self.pos
 	}
 
-	fn set_pos( &mut self, pos: usize ) -> usize
-	{
-		let max_pos = self.size.saturating_sub( 1 );
-		self.pos = if pos > max_pos {
-			max_pos
-		} else {
-			pos
-		};
+	fn set_pos(&mut self, pos: usize) -> usize {
+		let max_pos = self.size.saturating_sub(1);
+		self.pos = if pos > max_pos { max_pos } else { pos };
 
 		self.pos
 	}

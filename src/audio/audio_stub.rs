@@ -51,13 +51,13 @@ impl AudioStub {
 		true
 	}
 
-	pub fn load_music_native( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
-//		self.music.load( fileloader, filename )
+	pub fn load_music_native(&mut self, fileloader: &mut impl FileLoader, filename: &str) -> bool {
+		//		self.music.load( fileloader, filename )
 		true
 	}
 
-	pub fn play_music( &mut self ) {
-//		self.music.play();
+	pub fn play_music(&mut self) {
+		//		self.music.play();
 	}
 	pub fn pause_music(&mut self) {
 		//		self.music.pause();

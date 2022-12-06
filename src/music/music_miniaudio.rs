@@ -1,11 +1,10 @@
-
-use crate::FileLoader;
-use crate::fileloader::FileLoaderFile;
-
 use lewton::inside_ogg::OggStreamReader;
 use ringbuf::RingBuffer;
 
-#[derive(Debug,PartialEq)]
+use crate::fileloader::FileLoaderFile;
+use crate::FileLoader;
+
+#[derive(Debug, PartialEq)]
 enum State {
 	Initialized,
 	Playing,
@@ -14,18 +13,17 @@ enum State {
 
 //#[derive(Debug)]
 pub struct MusicMiniaudio {
-	stream_reader:	Option< OggStreamReader< Box< dyn FileLoaderFile > > >,
-	consumer: 		ringbuf::Consumer< f32 >,
-	producer: 		ringbuf::Producer< f32 >,
-	state: 			State,
-	largest_seen_packet:	usize,
+	stream_reader:       Option<OggStreamReader<Box<dyn FileLoaderFile>>>,
+	consumer:            ringbuf::Consumer<f32>,
+	producer:            ringbuf::Producer<f32>,
+	state:               State,
+	largest_seen_packet: usize,
 }
 
 impl MusicMiniaudio {
-
 	pub fn new() -> Self {
-		let mut rb = RingBuffer::new( 20*2944 /* 2*1024*1024 */ ); //size is randomly choosen
-		let ( producer, consumer ) = rb.split();
+		let mut rb = RingBuffer::new(20 * 2944 /* 2*1024*1024 */); //size is randomly choosen
+		let (producer, consumer) = rb.split();
 
 		Self {
 			stream_reader: None,
@@ -35,18 +33,18 @@ impl MusicMiniaudio {
 			largest_seen_packet: 0,
 		}
 	}
-	pub fn load( &mut self, fileloader: &mut impl FileLoader, filename: &str ) -> bool {
-		let mut f = fileloader.open( &filename );
+	pub fn load(&mut self, fileloader: &mut impl FileLoader, filename: &str) -> bool {
+		let mut f = fileloader.open(&filename);
 		if !f.is_valid() {
 			println!("Couldn't open file: {}", filename);
 			return false;
 		}
 
-		dbg!( &f );
+		dbg!(&f);
 		let mut srr = match OggStreamReader::new(f) {
-			Ok( srr ) => srr,
-			Err( e ) => {
-				eprintln!( "Error opening Ogg: {}, {:?}", &filename, &e);
+			Ok(srr) => srr,
+			Err(e) => {
+				eprintln!("Error opening Ogg: {}, {:?}", &filename, &e);
 				todo!("");
 				return false;
 			},
@@ -63,7 +61,7 @@ impl MusicMiniaudio {
 			panic!("Non stereo not implemented please reencode with 2 channels");
 		}
 
-		self.stream_reader = Some( srr );
+		self.stream_reader = Some(srr);
 		self.state = State::Playing;
 
 		// prefill buffer
@@ -72,30 +70,35 @@ impl MusicMiniaudio {
 				break;
 			}
 		}
-/*
-		// pre decode max
-		while !self.decode_packet() {
+		/*
+				// pre decode max
+				while !self.decode_packet() {
 
-		}
-*/		
+				}
+		*/
 		true
 	}
 
-	fn decode_packet( &mut self ) -> bool {
-		if let Some( srr ) = &mut self.stream_reader {
-
+	fn decode_packet(&mut self) -> bool {
+		if let Some(srr) = &mut self.stream_reader {
 			// theoretical max decoded size for packet: 1572864 ??
-			if self.producer.remaining() < 10*2944 /* 1572864 */ {
+			if self.producer.remaining() < 10 * 2944
+			/* 1572864 */
+			{
 				// do not decode if we are not sure it will fit
-				eprintln!("Music buffer almost full {}/{}. Skipping decoding!", self.producer.len(), self.producer.capacity());
+				eprintln!(
+					"Music buffer almost full {}/{}. Skipping decoding!",
+					self.producer.len(),
+					self.producer.capacity()
+				);
 				return false;
 			};
 
 			match srr.read_dec_packet_itl() {
-				Ok( pck_samples ) => {
+				Ok(pck_samples) => {
 					match pck_samples {
-						Some( pck_samples ) => {
-//							eprintln!("{}", pck_samples.len());
+						Some(pck_samples) => {
+							//							eprintln!("{}", pck_samples.len());
 							let c = self.producer.remaining();
 
 							if pck_samples.len() > self.largest_seen_packet {
@@ -103,20 +106,23 @@ impl MusicMiniaudio {
 							}
 
 							if c < pck_samples.len() {
-								eprintln!("buffer full, stopping music decoding -> {}", self.producer.len());
+								eprintln!(
+									"buffer full, stopping music decoding -> {}",
+									self.producer.len()
+								);
 								todo!("this would throw away data");
 								return true;
 							}
 
-							let mut buffer: Vec< f32 > = Vec::with_capacity( pck_samples.len() );
+							let mut buffer: Vec<f32> = Vec::with_capacity(pck_samples.len());
 
 							for p in 0..pck_samples.len() {
-								let v = pck_samples[ p ];
-								let v = ( v as f32 ) / 32767.0;
-								buffer.push( v );
-							};
+								let v = pck_samples[p];
+								let v = (v as f32) / 32767.0;
+								buffer.push(v);
+							}
 
-							self.producer.push_slice( &buffer );
+							self.producer.push_slice(&buffer);
 
 							return false;
 						},
@@ -125,29 +131,25 @@ impl MusicMiniaudio {
 							eprintln!("Finished decoding music.");
 							eprintln!("largest_seen_packet: {}", self.largest_seen_packet);
 							return true;
-						}
+						},
 					}
 				},
-				Err( e ) => {
-					eprintln!("Error decode packet: {:?}", &e );
+				Err(e) => {
+					eprintln!("Error decode packet: {:?}", &e);
 					return true;
-				}
+				},
 			}
 		}
 		true
 	}
 
-	pub fn play( &mut self ) {
-	}
+	pub fn play(&mut self) {}
 
-	pub fn pause( &mut self ) {
-	}
+	pub fn pause(&mut self) {}
 
-	pub fn stop( &mut self ) {
-	}
+	pub fn stop(&mut self) {}
 
-	pub fn update( &mut self, _time_step: f64 ) {
-
+	pub fn update(&mut self, _time_step: f64) {
 		for _ in 0..=4 {
 			match self.state {
 				State::Playing => {
@@ -158,25 +160,20 @@ impl MusicMiniaudio {
 		}
 	}
 
-
-	pub fn fill_slice( &mut self, slice: &mut [f32] ) {
-
+	pub fn fill_slice(&mut self, slice: &mut [f32]) {
 		eprintln!("Music buffer: {}", self.consumer.len());
 		let l = slice.len();
 		let mut c = 0;
 		while c < l {
-			if let Some( v ) = self.consumer.pop() {
-				slice[ c ] += v;
+			if let Some(v) = self.consumer.pop() {
+				slice[c] += v;
 				c += 1;
 			} else {
 				break;
 			}
 		}
 		if c < l && self.state == State::Playing {
-			println!("Starving music playback {} < {}", c, l );
+			println!("Starving music playback {} < {}", c, l);
 		}
 	}
-
-
 }
-
