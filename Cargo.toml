@@ -37,18 +37,20 @@ path="src/benchmark.rs"
 ringbuf = "0.2.6"
 
 [dependencies.miniaudio]
-version = "0.11.0"
+package = "om-fork-miniaudio"
+version = "0.12.0"
 features = [ "ma-no-decoding", "ma-log-level-verbose" ]
 #path = "../miniaudio-rs/miniaudio"
 
 [dependencies.ep-miniaudio-sys]
-version = "2.5.0"
+package = "om-fork-ep-miniaudio-sys"
+version = "2.6.0"
 # features = [ "ma-no-decoding", "ma-log-level-verbose" ]
 # path = "../miniaudio-rs/miniaudio-sys"
 
 [patch.crates-io]
-ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
-miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
+#ep-miniaudio-sys = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
+#miniaudio = { git = 'https://github.com/andreasOM/miniaudio-rs/' }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"
