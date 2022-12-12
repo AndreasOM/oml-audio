@@ -196,7 +196,7 @@ dependencies = [
 
 [[package]]
 name = "oml-audio"
-version = "0.6.8-dev"
+version = "0.6.8-alpha"
 dependencies = [
  "cfg_aliases",
  "lewton",
