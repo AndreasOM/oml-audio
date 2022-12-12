@@ -229,6 +229,10 @@ impl AudioMiniaudio {
 		self.music.pause();
 	}
 
+	pub fn is_music_playing(&self) -> bool {
+		false
+	}
+
 	pub fn load_sound_bank(&mut self, fileloader: &mut impl FileLoader, filename: &str) {
 		self.sound_bank.load(fileloader, filename);
 	}

@@ -66,6 +66,10 @@ impl AudioApple {
 		self.music.pause();
 	}
 
+	pub fn is_music_playing(&self) -> bool {
+		self.music.is_playing()
+	}
+
 	pub fn load_sound_bank(&mut self, fileloader: &mut impl FileLoader, filename: &str) {
 		self.sound_bank.load(fileloader, filename)
 	}
