@@ -78,7 +78,7 @@ impl MusicApple {
 		}
 	}
 
-	pub fn is_playing(&self) {
+	pub fn is_playing(&self) -> bool {
 		if let Some(player) = self.player {
 			unsafe {
 				let is_playing: bool = msg_send![player, isPlaying];
