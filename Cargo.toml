@@ -16,7 +16,8 @@ categories = ["multimedia","game-development"]
 default-run="oml-audio"
 
 [features]
-default = [ "use_stub" ]
+default = [ "use_apple", "use_miniaudio", "use_stub" ]
+# default = [ "use_stub" ]
 # default = [ "use_apple" ]
 # default = [ "use_miniaudio" ]
 # default = []

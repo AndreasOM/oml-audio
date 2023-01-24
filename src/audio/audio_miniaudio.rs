@@ -143,17 +143,6 @@ impl AudioMiniaudio {
 		self.music.load(fileloader, filename)
 	}
 
-	pub fn pause_music(&mut self) {
-		self.music.pause();
-	}
-
-	pub fn is_music_playing(&self) -> bool {
-		false
-	}
-
-	pub fn is_any_sound_playing(&self) -> bool {
-		self.sound_bank.is_any_sound_playing()
-	}
 
 	pub fn capture(&mut self, size: usize) {
 		self.capture_buffer.clear();
@@ -232,11 +221,24 @@ impl<F: crate::FileLoader> AudioBackend<F> for AudioMiniaudio {
 	fn play_music(&mut self) {
 		self.music.play();
 	}
+	fn pause_music(&mut self) {
+		self.music.pause();
+	}
+
+	fn is_music_playing(&self) -> bool {
+		false
+	}
+
 
 	fn play_sound(&mut self, name: &str) {
 		println!("Playing {}", &name);
 		self.sound_bank.play(name);
 	}
+
+	fn is_any_sound_playing(&self) -> bool {
+		self.sound_bank.is_any_sound_playing()
+	}
+	
 	fn load_music_native(&mut self, fileloader: &mut F, filename: &str) -> bool {
 		let filename = format!("{}.ogg", filename);
 		self.music.load(fileloader, &filename)

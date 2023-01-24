@@ -45,25 +45,6 @@ impl AudioStub {
 		true
 	}
 
-	pub fn play_music(&mut self) {
-		//		self.music.play();
-	}
-	pub fn pause_music(&mut self) {
-		//		self.music.pause();
-	}
-
-	pub fn is_music_playing(&self) -> bool {
-		false
-	}
-
-	pub fn play_sound(&mut self, name: &str) {
-		//		self.sound_bank.play( name );
-	}
-
-	pub fn is_any_sound_playing(&self) -> bool {
-		false
-	}
-
 	pub fn capture(&mut self, size: usize) {}
 
 	pub fn capture_buffer_slice(&self) -> &[f32] {
@@ -83,8 +64,13 @@ impl<F: crate::FileLoader> AudioBackend<F> for AudioStub {
 	fn load_sound_bank(&mut self, _fileloader: &mut F, _filename: &str) {}
 
 	fn play_music(&mut self) {}
+	fn pause_music(&mut self) {}
+	fn is_music_playing(&self) -> bool { false }
 
 	fn play_sound(&mut self, _name: &str) {}
+	fn is_any_sound_playing(&self) -> bool {
+		false
+	}
 	fn load_music_native(&mut self, _fileloader: &mut F, _filename: &str) -> bool {
 		true
 	}

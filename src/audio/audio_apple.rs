@@ -43,21 +43,6 @@ impl AudioApple {
 		self.music.load(fileloader, filename)
 	}
 
-	pub fn play_music(&mut self) {
-		self.music.play();
-	}
-
-	pub fn pause_music(&mut self) {
-		self.music.pause();
-	}
-
-	pub fn is_music_playing(&self) -> bool {
-		self.music.is_playing()
-	}
-
-	pub fn is_any_sound_playing(&self) -> bool {
-		self.sound_bank.is_any_sound_playing()
-	}
 
 	pub fn capture(&mut self, _size: usize) {}
 
@@ -84,9 +69,19 @@ impl<F: crate::FileLoader> AudioBackend<F> for AudioApple {
 	fn play_music(&mut self) {
 		self.music.play();
 	}
+	fn pause_music(&mut self) {
+		self.music.pause();
+	}
+
+	fn is_music_playing(&self) -> bool {
+		self.music.is_playing()
+	}
 
 	fn play_sound(&mut self, name: &str) {
 		self.sound_bank.play(name);
+	}
+	fn is_any_sound_playing(&self) -> bool {
+		self.sound_bank.is_any_sound_playing()
 	}
 	fn load_music_native(&mut self, fileloader: &mut F, filename: &str) -> bool {
 		let filename = format!("{}.mp3", filename);
