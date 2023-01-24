@@ -30,6 +30,13 @@ Features:
 Future:
 - [ ] Support other platforms (iOS, android, etc)
 
+## Breaking changes in 0.8.x
+
+Newer versions allow compiling in multiple backends and selecting them at runtime.
+This has the downside of a breaking API change :(
+`Audio::new`, or rather `Audio::create_default` or `Audio::create` now return a `Box<dyn AudioBackend>`
+which might mean you have to change your storage.
+AudioBackend is also now generic over `FileLoader`.
 
 ## Example :WIP:
 
@@ -41,7 +48,8 @@ pub fn main() {
     let mut fileloader = FileLoaderDisk::new( "./data" ); // 'data' is the base directory for all other files/paths
     fileloader.enable_debug();
 
-    let mut audio = Audio::new();
+    // OLD: let mut audio = Audio::new();
+    let mut audio: Box<dyn AudioBackend<FileLoaderDisk>> = Audio::create_default(); // explicit type for verbosity only
     audio.load_sound_bank( &mut fileloader, "test.omsb" );
 
     audio.play_sound( "SOUND_ID" );

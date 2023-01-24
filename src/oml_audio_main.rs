@@ -8,8 +8,8 @@ pub fn main() {
 	let mut fileloader = FileLoaderDisk::new("./data");
 	fileloader.enable_debug();
 
-	let mut audio = Audio::new();
-	//	let mut audio = Audio::create_default();
+	// let mut audio = Audio::new();
+	let mut audio: Box<dyn AudioBackend<FileLoaderDisk>> = Audio::create_default();
 	//	audio.start();
 
 	//	audio.load_music( &mut fileloader, "test.mp3" );
