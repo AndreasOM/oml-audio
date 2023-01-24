@@ -14,7 +14,8 @@ pub fn main() {
 
 	#[cfg(all(feature = "use_apple", not(target_os = "macos")))]
 	{
-		panic!("Backend apple only works on macOS. (iOS, ipadOS, tvOS coming soon)");
+		//panic!("Backend apple only works on macOS. (iOS, ipadOS, tvOS coming soon)");
+		// :TODO: emit warning
 	}
 
 	cfg_aliases! {
@@ -25,7 +26,7 @@ pub fn main() {
 		// backends
 		use_apple: { all(macos, feature = "use_apple", not(wasm)) },
 		use_miniaudio: { all(feature = "use_miniaudio", not(wasm)) },
-		use_stub: { not(any(feature = "use_miniaudio", feature = "use_apple" ) ) }, // blocked by panic above
+		use_stub: { feature = "use_stub" }, //{ not(any(feature = "use_miniaudio", feature = "use_apple" ) ) }, // blocked by panic above
 	}
 
 	if std::env::var("TARGET").unwrap().contains("-apple") {
