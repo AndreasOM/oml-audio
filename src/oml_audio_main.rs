@@ -1,7 +1,6 @@
 use oml_audio::fileloader::FileLoaderDisk;
 use oml_audio::Audio;
-use oml_audio::Music;
-use oml_audio::SoundBank;
+use oml_audio::AudioBackend;
 
 pub fn main() {
 	println!("oml-audio !");
@@ -10,6 +9,7 @@ pub fn main() {
 	fileloader.enable_debug();
 
 	let mut audio = Audio::new();
+	//	let mut audio = Audio::create_default();
 	//	audio.start();
 
 	//	audio.load_music( &mut fileloader, "test.mp3" );

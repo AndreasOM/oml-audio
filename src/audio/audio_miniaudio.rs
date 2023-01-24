@@ -1,17 +1,13 @@
-use std::cell::RefCell;
-use std::sync::Arc;
-
 use miniaudio::FramesMut;
 use miniaudio::{Device, DeviceConfig, DeviceType, Format};
-use miniaudio::{Waveform, WaveformConfig, WaveformType};
 use ringbuf::RingBuffer;
 
+use crate::music::MusicMiniaudio;
+use crate::AudioBackend;
 use crate::FileLoader;
-use crate::Music;
 use crate::SoundBank;
-use crate::{WavFile, WavPlayer};
 
-pub type DeviceFormatType = f32;
+//pub type DeviceFormatType = f32;
 pub const DEVICE_FORMAT: Format = Format::F32;
 pub const DEVICE_CHANNELS: u32 = 2;
 pub const DEVICE_SAMPLE_RATE: u32 = miniaudio::SAMPLE_RATE_48000;
@@ -19,33 +15,6 @@ pub const DEVICE_SAMPLE_RATE: u32 = miniaudio::SAMPLE_RATE_48000;
 use std::time::Instant;
 
 use miniaudio::Context; // temporary, we get higher precision by calculating from the audio callbacks
-
-#[derive(Debug)]
-struct Synth {
-	phase: f32,
-	freq:  f32,
-}
-
-impl Synth {
-	pub fn new(freq: f32) -> Self {
-		Self { phase: 0.0, freq }
-	}
-
-	pub fn next_sample(&mut self) -> f32 {
-		let s = self.phase;
-
-		// freq = period per second
-		// DEVICE_SAMPLE_RATE = samples per second
-		// period = a cycle of 0.0 -> 1.0
-		//
-		self.phase += self.freq / (DEVICE_SAMPLE_RATE as f32); //0.1 * self.freq;
-		if self.phase > 1.0 {
-			self.phase -= 1.0;
-		}
-
-		s
-	}
-}
 
 struct Buffer {
 	consumer: ringbuf::Consumer<f32>,
@@ -81,9 +50,8 @@ pub struct AudioMiniaudio {
 	producer:       Option<ringbuf::Producer<f32>>,
 	last_now:       Instant,
 	sound_bank:     SoundBank,
-	music:          Music,
+	music:          MusicMiniaudio,
 	//	wave:			Waveform,
-	synth:          Synth,
 	//	wav_file:		WavFile,
 	//	wav_player:		WavPlayer,
 	capture_size:   usize,
@@ -124,9 +92,8 @@ impl AudioMiniaudio {
 			producer:       None,
 			last_now:       Instant::now(),
 			sound_bank:     SoundBank::new(),
-			music:          Music::new(),
+			music:          MusicMiniaudio::new(),
 			//			wave: sine_wave,
-			synth:          Synth::new(440.0),
 			//			wav_file: WavFile::new(),
 			//			wav_player: WavPlayer::new(),
 			capture_size:   0,
@@ -135,53 +102,13 @@ impl AudioMiniaudio {
 		}
 	}
 
-	pub fn start(&mut self) {
-		let mut device_config = DeviceConfig::new(DeviceType::Playback);
-		device_config.playback_mut().set_format(DEVICE_FORMAT);
-		device_config.playback_mut().set_channels(DEVICE_CHANNELS);
-		device_config.set_sample_rate(DEVICE_SAMPLE_RATE);
-
-		let mut rb = RingBuffer::new(4 * 4096);
-		let (producer, consumer) = rb.split();
-		let mut buffer = Buffer::new(consumer);
-
-		device_config.set_stop_callback(|_device| {
-			println!("Device Stopped.");
-		});
-
-		let mut device = Device::new(None, &device_config).expect("failed to open playback device");
-		device.set_data_callback(move |_device, output, _input| {
-			buffer.data_output_callback(output);
-		});
-		device.start().expect("failed to start device");
-
-		println!("Device Backend: {:?}", device.context().backend());
-
-		self.device = Some(device);
-		self.producer = Some(producer);
-	}
-
-	pub fn update(&mut self) -> f64 {
-		let timestep = self.last_now.elapsed().as_secs_f64();
-		self.last_now = Instant::now();
-
-		self.music.update(timestep);
-		self.sound_bank.update(timestep);
-
-		if let Some(producer) = &mut self.producer {
-			AudioMiniaudio::fill_buffer(&mut self.sound_bank, &mut self.music, producer);
-		}
-
-		timestep
-	}
-
 	pub fn get_sound_bank_mut(&mut self) -> &mut SoundBank {
 		&mut self.sound_bank
 	}
 
 	pub fn fill_buffer(
 		sound_bank: &mut SoundBank,
-		music: &mut Music,
+		music: &mut MusicMiniaudio,
 		producer: &mut ringbuf::Producer<f32>,
 	) -> usize {
 		let c = producer.remaining();
@@ -216,30 +143,12 @@ impl AudioMiniaudio {
 		self.music.load(fileloader, filename)
 	}
 
-	pub fn load_music_native(&mut self, fileloader: &mut impl FileLoader, filename: &str) -> bool {
-		let filename = format!("{}.ogg", filename);
-		self.music.load(fileloader, &filename)
-	}
-
-	pub fn play_music(&mut self) {
-		self.music.play();
-	}
-
 	pub fn pause_music(&mut self) {
 		self.music.pause();
 	}
 
 	pub fn is_music_playing(&self) -> bool {
 		false
-	}
-
-	pub fn load_sound_bank(&mut self, fileloader: &mut impl FileLoader, filename: &str) {
-		self.sound_bank.load(fileloader, filename);
-	}
-
-	pub fn play_sound(&mut self, name: &str) {
-		println!("Playing {}", &name);
-		self.sound_bank.play(name);
 	}
 
 	pub fn is_any_sound_playing(&self) -> bool {
@@ -273,5 +182,63 @@ impl AudioMiniaudio {
 				}
 			})
 			.expect("failed to get devices");
+	}
+}
+
+impl<F: crate::FileLoader> AudioBackend<F> for AudioMiniaudio {
+	fn start(&mut self) {
+		let mut device_config = DeviceConfig::new(DeviceType::Playback);
+		device_config.playback_mut().set_format(DEVICE_FORMAT);
+		device_config.playback_mut().set_channels(DEVICE_CHANNELS);
+		device_config.set_sample_rate(DEVICE_SAMPLE_RATE);
+
+		let mut rb = RingBuffer::new(4 * 4096);
+		let (producer, consumer) = rb.split();
+		let mut buffer = Buffer::new(consumer);
+
+		device_config.set_stop_callback(|_device| {
+			println!("Device Stopped.");
+		});
+
+		let mut device = Device::new(None, &device_config).expect("failed to open playback device");
+		device.set_data_callback(move |_device, output, _input| {
+			buffer.data_output_callback(output);
+		});
+		device.start().expect("failed to start device");
+
+		println!("Device Backend: {:?}", device.context().backend());
+
+		self.device = Some(device);
+		self.producer = Some(producer);
+	}
+
+	fn update(&mut self) -> f64 {
+		let timestep = self.last_now.elapsed().as_secs_f64();
+		self.last_now = Instant::now();
+
+		self.music.update(timestep);
+		self.sound_bank.update(timestep);
+
+		if let Some(producer) = &mut self.producer {
+			AudioMiniaudio::fill_buffer(&mut self.sound_bank, &mut self.music, producer);
+		}
+
+		timestep
+	}
+	fn load_sound_bank(&mut self, fileloader: &mut F, filename: &str) {
+		self.sound_bank.load(fileloader, filename);
+	}
+
+	fn play_music(&mut self) {
+		self.music.play();
+	}
+
+	fn play_sound(&mut self, name: &str) {
+		println!("Playing {}", &name);
+		self.sound_bank.play(name);
+	}
+	fn load_music_native(&mut self, fileloader: &mut F, filename: &str) -> bool {
+		let filename = format!("{}.ogg", filename);
+		self.music.load(fileloader, &filename)
 	}
 }

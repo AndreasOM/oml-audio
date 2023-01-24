@@ -1,6 +1,6 @@
 [package]
 name = "oml-audio"
-version = "0.6.10-dev"
+version = "0.8.0-dev"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,8 +16,10 @@ categories = ["multimedia","game-development"]
 default-run="oml-audio"
 
 [features]
+default = [ "use_apple", "use_miniaudio", "use_stub" ]
 # default = [ "use_apple" ]
-default = []
+# default = [ "use_miniaudio" ]
+# default = []
 use_apple = []
 use_miniaudio = [ "dep:om-fork-miniaudio", "dep:om-fork-ep-miniaudio-sys", "dep:lewton" ]
 use_stub = []

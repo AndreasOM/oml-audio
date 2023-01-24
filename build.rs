@@ -3,7 +3,7 @@ use cfg_aliases::cfg_aliases;
 pub fn main() {
 	#[cfg(all(feature = "use_apple", feature = "use_miniaudio"))]
 	{
-		panic!("Backend apple and miniaudio are exclusive for the moment. Just choose one.");
+		//panic!("Backend apple and miniaudio are exclusive for the moment. Just choose one.");
 	}
 
 	#[cfg(not(any(feature = "use_apple", feature = "use_miniaudio")))]

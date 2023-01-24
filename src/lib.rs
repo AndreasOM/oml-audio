@@ -1,8 +1,11 @@
+mod audio_backend;
+pub use audio_backend::AudioBackend;
+
 mod audio;
 pub use audio::Audio;
 
 mod music;
-pub use music::Music;
+//pub use music::Music;
 
 mod sound;
 pub use sound::SoundBank;

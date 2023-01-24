@@ -1,8 +1,9 @@
 //use crate::SoundPool;
 use std::time::Instant;
 
+use crate::music::MusicStub;
+use crate::AudioBackend;
 use crate::FileLoader;
-use crate::Music;
 use crate::SoundBank; // temporary, we get higher precision by calculating from the audio callbacks
 
 #[derive(Debug)]
@@ -39,19 +40,7 @@ impl AudioStub {
 		0
 	}
 
-	pub fn update(&mut self) -> f64 {
-		let timestep = self.last_now.elapsed().as_secs_f64();
-		self.last_now = Instant::now();
-
-		timestep
-	}
-
-	pub fn load_music(&mut self, fileloader: &mut impl FileLoader, filename: &str) -> bool {
-		//		self.music.load( fileloader, filename )
-		true
-	}
-
-	pub fn load_music_native(&mut self, fileloader: &mut impl FileLoader, filename: &str) -> bool {
+	pub fn load_music(&mut self, _fileloader: &mut impl FileLoader, _filename: &str) -> bool {
 		//		self.music.load( fileloader, filename )
 		true
 	}
@@ -67,10 +56,6 @@ impl AudioStub {
 		false
 	}
 
-	pub fn load_sound_bank(&mut self, fileloader: &mut impl FileLoader, filename: &str) {
-		//		self.sound_bank.load( fileloader, filename )
-	}
-
 	pub fn play_sound(&mut self, name: &str) {
 		//		self.sound_bank.play( name );
 	}
@@ -83,5 +68,24 @@ impl AudioStub {
 
 	pub fn capture_buffer_slice(&self) -> &[f32] {
 		self.capture_buffer.as_slice()
+	}
+}
+
+impl<F: crate::FileLoader> AudioBackend<F> for AudioStub {
+	fn start(&mut self) {}
+
+	fn update(&mut self) -> f64 {
+		let timestep = self.last_now.elapsed().as_secs_f64();
+		self.last_now = Instant::now();
+
+		timestep
+	}
+	fn load_sound_bank(&mut self, _fileloader: &mut F, _filename: &str) {}
+
+	fn play_music(&mut self) {}
+
+	fn play_sound(&mut self, _name: &str) {}
+	fn load_music_native(&mut self, _fileloader: &mut F, _filename: &str) -> bool {
+		true
 	}
 }

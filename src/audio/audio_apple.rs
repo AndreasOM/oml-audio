@@ -1,13 +1,14 @@
 //use crate::SoundPool;
 use std::time::Instant;
 
+use crate::music::MusicApple;
+use crate::AudioBackend;
 use crate::FileLoader;
-use crate::Music;
 use crate::SoundBank; // temporary, we get higher precision by calculating from the audio callbacks
 
 #[derive(Debug)]
 pub struct AudioApple {
-	music:          Music,
+	music:          MusicApple,
 	sound_bank:     SoundBank,
 	last_now:       Instant,
 	capture_buffer: Vec<f32>,
@@ -16,22 +17,11 @@ pub struct AudioApple {
 impl AudioApple {
 	pub fn new() -> Self {
 		Self {
-			music:          Music::new(),
+			music:          MusicApple::new(),
 			sound_bank:     SoundBank::new(),
 			last_now:       Instant::now(),
 			capture_buffer: Vec::new(),
 		}
-	}
-
-	pub fn start(&mut self) {}
-
-	pub fn update(&mut self) -> f64 {
-		let timestep = self.last_now.elapsed().as_secs_f64();
-		self.last_now = Instant::now();
-
-		self.music.update(timestep);
-		self.sound_bank.update(timestep);
-		timestep
 	}
 
 	pub fn get_sound_bank_mut(&mut self) -> &mut SoundBank {
@@ -53,11 +43,6 @@ impl AudioApple {
 		self.music.load(fileloader, filename)
 	}
 
-	pub fn load_music_native(&mut self, fileloader: &mut impl FileLoader, filename: &str) -> bool {
-		let filename = format!("{}.mp3", filename);
-		self.music.load(fileloader, &filename)
-	}
-
 	pub fn play_music(&mut self) {
 		self.music.play();
 	}
@@ -70,21 +55,41 @@ impl AudioApple {
 		self.music.is_playing()
 	}
 
-	pub fn load_sound_bank(&mut self, fileloader: &mut impl FileLoader, filename: &str) {
-		self.sound_bank.load(fileloader, filename)
-	}
-
-	pub fn play_sound(&mut self, name: &str) {
-		self.sound_bank.play(name);
-	}
-
 	pub fn is_any_sound_playing(&self) -> bool {
 		self.sound_bank.is_any_sound_playing()
 	}
 
-	pub fn capture(&mut self, size: usize) {}
+	pub fn capture(&mut self, _size: usize) {}
 
 	pub fn capture_buffer_slice(&self) -> &[f32] {
 		self.capture_buffer.as_slice()
+	}
+}
+
+impl<F: crate::FileLoader> AudioBackend<F> for AudioApple {
+	fn start(&mut self) {}
+
+	fn update(&mut self) -> f64 {
+		let timestep = self.last_now.elapsed().as_secs_f64();
+		self.last_now = Instant::now();
+
+		self.music.update(timestep);
+		self.sound_bank.update(timestep);
+		timestep
+	}
+	fn load_sound_bank(&mut self, fileloader: &mut F, filename: &str) {
+		self.sound_bank.load(fileloader, filename)
+	}
+
+	fn play_music(&mut self) {
+		self.music.play();
+	}
+
+	fn play_sound(&mut self, name: &str) {
+		self.sound_bank.play(name);
+	}
+	fn load_music_native(&mut self, fileloader: &mut F, filename: &str) -> bool {
+		let filename = format!("{}.mp3", filename);
+		self.music.load(fileloader, &filename)
 	}
 }
