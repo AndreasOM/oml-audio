@@ -5,6 +5,8 @@
 
 ## TODO
 
+- [ ] Allow runtime selection of backend
+- [ ] Add fading over time
 - [ ] Use tracing for output
 - [ ] Reduce debug noise
 - [ ] Implement `pause_music` for miniaudio.
