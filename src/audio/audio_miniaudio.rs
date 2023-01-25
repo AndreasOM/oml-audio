@@ -143,7 +143,6 @@ impl AudioMiniaudio {
 		self.music.load(fileloader, filename)
 	}
 
-
 	pub fn capture(&mut self, size: usize) {
 		self.capture_buffer.clear();
 		self.capture_buffer.reserve_exact(size);
@@ -175,6 +174,9 @@ impl AudioMiniaudio {
 }
 
 impl<F: crate::FileLoader> AudioBackend<F> for AudioMiniaudio {
+	fn backend_type(&self) -> &'static str {
+		"Miniaudio"
+	}
 	fn start(&mut self) {
 		let mut device_config = DeviceConfig::new(DeviceType::Playback);
 		device_config.playback_mut().set_format(DEVICE_FORMAT);
@@ -229,7 +231,6 @@ impl<F: crate::FileLoader> AudioBackend<F> for AudioMiniaudio {
 		false
 	}
 
-
 	fn play_sound(&mut self, name: &str) {
 		println!("Playing {}", &name);
 		self.sound_bank.play(name);
@@ -238,7 +239,7 @@ impl<F: crate::FileLoader> AudioBackend<F> for AudioMiniaudio {
 	fn is_any_sound_playing(&self) -> bool {
 		self.sound_bank.is_any_sound_playing()
 	}
-	
+
 	fn load_music_native(&mut self, fileloader: &mut F, filename: &str) -> bool {
 		let filename = format!("{}.ogg", filename);
 		self.music.load(fileloader, &filename)

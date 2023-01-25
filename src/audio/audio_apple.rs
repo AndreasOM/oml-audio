@@ -43,7 +43,6 @@ impl AudioApple {
 		self.music.load(fileloader, filename)
 	}
 
-
 	pub fn capture(&mut self, _size: usize) {}
 
 	pub fn capture_buffer_slice(&self) -> &[f32] {
@@ -52,6 +51,9 @@ impl AudioApple {
 }
 
 impl<F: crate::FileLoader> AudioBackend<F> for AudioApple {
+	fn backend_type(&self) -> &'static str {
+		"Apple"
+	}
 	fn start(&mut self) {}
 
 	fn update(&mut self) -> f64 {

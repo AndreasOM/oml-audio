@@ -4,6 +4,7 @@ pub trait AudioBackend<F>
 where
 	F: FileLoader,
 {
+	fn backend_type(&self) -> &'static str;
 	fn start(&mut self) {}
 	fn load_sound_bank(&mut self, _fileloader: &mut F, _filename: &str);
 	fn update(&mut self) -> f64;

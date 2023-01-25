@@ -53,6 +53,9 @@ impl AudioStub {
 }
 
 impl<F: crate::FileLoader> AudioBackend<F> for AudioStub {
+	fn backend_type(&self) -> &'static str {
+		"Stub"
+	}
 	fn start(&mut self) {}
 
 	fn update(&mut self) -> f64 {
@@ -65,7 +68,9 @@ impl<F: crate::FileLoader> AudioBackend<F> for AudioStub {
 
 	fn play_music(&mut self) {}
 	fn pause_music(&mut self) {}
-	fn is_music_playing(&self) -> bool { false }
+	fn is_music_playing(&self) -> bool {
+		false
+	}
 
 	fn play_sound(&mut self, _name: &str) {}
 	fn is_any_sound_playing(&self) -> bool {
