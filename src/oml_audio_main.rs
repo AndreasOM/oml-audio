@@ -11,6 +11,7 @@ pub fn main() {
 	// let mut audio = Audio::new();
 	let mut audio: Box<dyn AudioBackend<FileLoaderDisk>> = Audio::create_default();
 	//	audio.start();
+	println!("Backend: {}", audio.backend_type() );
 
 	//	audio.load_music( &mut fileloader, "test.mp3" );
 	audio.load_music_native(&mut fileloader, "test");
