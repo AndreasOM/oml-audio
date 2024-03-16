@@ -1,6 +1,6 @@
 [package]
 name = "oml-audio"
-version = "0.8.7-dev"
+version = "0.8.8-dev"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -45,13 +45,13 @@ version = "0.10.2"
 optional = true
 
 [dependencies.om-fork-miniaudio]
-version = "0.12.0"
+version = "0.12.1"
 features = [ "ma-no-decoding", "ma-log-level-verbose" ]
 optional = true
 #path = "../miniaudio-rs/miniaudio"
 
 [dependencies.om-fork-ep-miniaudio-sys]
-version = "2.6.0"
+version = "2.6.1"
 optional = true
 # features = [ "ma-no-decoding", "ma-log-level-verbose" ]
 # path = "../miniaudio-rs/miniaudio-sys"
